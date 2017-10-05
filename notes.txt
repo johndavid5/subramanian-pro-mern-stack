@@ -1,0 +1,4 @@
+1. Chapter 2, Location 925:
+  ECMAScript 2015 = ES2015
+  ...with older name...
+  ECMAScript 6th Edition(ES6)

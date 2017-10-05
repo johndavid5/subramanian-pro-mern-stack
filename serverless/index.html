@@ -20,7 +20,11 @@
     <div id="contents"></div><!-- this is where our component will appear -->
     <script type="text/babel">
     var contentNode = document.getElementById('contents');
-	var component = <h1 className="arnie">Let off some steam, Bennett!</h1>; // A simple JSX component;
+	//var sArnieLine = "Let off some steam, Bennett!";
+	var sArnieLine = "I'll be back, Bennett!";
+	//var component = <h1 className="arnie">Let off some steam, Bennett!</h1>; // A simple JSX component;
+	var component = <h1 className="arnie">{sArnieLine}</h1>; // A simple JSX component;
+	//var component = React.createElement('h1', {style: {fontStyle: "italic"}, className: "arnie"}, sArnieLine);
 	ReactDOM.render(component, contentNode); // Render the component inside the content Node
     </script>
   </body>
