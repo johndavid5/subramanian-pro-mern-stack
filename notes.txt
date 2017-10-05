@@ -1,4 +1,16 @@
 1. Chapter 2, Location 925:
+
+  ECMAScript5(ES5)
+  The 5th edition of ECMAScript, standardized in 2009
+  (currently implemented fairly completely in all modern browsers)
+
   ECMAScript 2015 = ES2015
   ...with older name...
-  ECMAScript 6th Edition(ES6)
+  ECMAScript 6th Edition (ES6)
+  The 6th Edition of ECMAScript,
+  standardized in 2015.
+
+  ECMASrcipt2016 (ES7) The 7th Edition of ECMAScript.
+  Scheduled for release in Summer of 2016.
+
+  See also: https://benmccormick.org/2015/09/14/es5-es6-es2016-es-next-whats-going-on-with-javascript-versioning/
