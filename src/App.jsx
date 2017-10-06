@@ -1,9 +1,44 @@
 const contentNode = document.getElementById('contents');
 
-const continents = ['Africa', 'America', 'Antarctica', 'Asia', 'Australia', 'Europe'];
+class IssueFilter extends React.Component {
+	render(){
+		return (
+			<div>This is a placeholder for the Issue Filter.</div>
+		);
+	}
+}
 
-const s_message = continents.map(c => `Let off some steam, ${c}!`).join(' ');
+class IssueTable extends React.Component {
+	render(){
+		return (
+			<div>This is a placeholder for the Issue Table.</div>
+		);
+	}
+}
 
-const component = <p className="arnie">{s_message}</p>; // A simple JSX component;
+class IssueAdd extends React.Component {
+	render(){
+		return (
+			<div>This is a placeholder for the Issue Add Entry Form.</div>
+		);
+	}
+}
 
-ReactDOM.render(component, contentNode); // Render the component inside the content Node
+class IssueList extends React.Component {
+	render(){
+		return (
+			<div>
+			 <h1>Issue Tracker</h1>
+			 <IssueFilter />	
+			 <hr />
+			 <IssueTable/>	
+			 <hr />
+			 <IssueAdd/>	
+			 <hr />
+			</div>
+		);
+	}
+}
+
+// Render the component inside the content Node
+ReactDOM.render(<IssueList></IssueList>, contentNode);

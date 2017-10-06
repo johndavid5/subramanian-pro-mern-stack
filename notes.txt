@@ -1,6 +1,6 @@
 1. Chapter 2, Location 925:
 
-  ECMAScript5(ES5)
+  ECMAScript5 (ES5)
   The 5th edition of ECMAScript, standardized in 2009
   (currently implemented fairly completely in all modern browsers)
 
