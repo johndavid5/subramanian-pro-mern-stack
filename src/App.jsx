@@ -1,3 +1,7 @@
+const VERSION = "1.1.5";
+
+console.log("App.js, VERSION " + VERSION );
+
 const contentNode = document.getElementById('contents');
 
 class IssueFilter extends React.Component {
@@ -10,6 +14,7 @@ class IssueFilter extends React.Component {
 
 class IssueRow extends React.Component {
 	render(){
+		console.log("IssueRow::render()...");
 		//const borderedStyle = {border: "1px solid silver", padding: 4}; // 4 -> 4px
 		const issue = this.props.issue;
 		return (
@@ -75,13 +80,69 @@ const issues = [
 ];
 
 class IssueList extends React.Component {
+	constructor(){
+		super();
+		this.state = { issues: issues };
+
+		// More efficient to bind once, and re-use...
+		// https://zhenyong.github.io/react/docs/reusable-components.html
+		this.createTestIssue = this.createTestIssue.bind(this);
+
+		setTimeout( this.createTestIssue, 2000 );
+
+		// Automatically create test issue in 2 seconds...
+		//setTimeout( this.createTestIssue.bind(this), 2000 );
+
+		// Or, use ES2015 arrow function to preserve "this"...
+		// or use lexical this, that is pick up this from
+		// the surroundings, rather than the caller's this...
+		// setTimeout( () => this.createTestIssue(), 2000 );
+
+		// Or use everyone's favorite, old-fashioned hack...
+		// use the "self=this" lexically "sealed" into this
+		// function's lexical scope...
+
+		// For fun article on closures in loops, see...
+		// ...https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures/
+		// this is similar to a portion of the "you don't know js scopes and closures"
+		// book...
+
+		// var self = this;
+		// setTimeout( function(){ self.createTestIssue()}, 2000 );
+	}
+
+	createIssue(newIssue){
+		// Use Array.slice() to create a shallow copy...
+		// copy references of object elements...make copies
+		// of primitive elements...
+		const newIssues = this.state.issues.slice();
+		newIssue.id = this.state.issues.length + 1;
+		newIssues.push(newIssue);
+		// When React sees the state being modified
+		// via setState(), it triggers a rerendering
+		// process for the component, and _all_descendent_
+		// components where properties get affected because
+		// of the state change.
+		this.setState({issues: newIssues });
+	}
+
+	createTestIssue(){
+		alert("createTestIssue()...");
+		this.createIssue({
+			status: 'New',
+			owner: 'Kumbhakarna',
+			created: new Date(),
+			title: 'Completion date should be optional'
+		});
+	}
+	
 	render(){
 		return (
 			<div>
 			 <h1>Issue Tracker</h1>
 			 <IssueFilter />	
 			 <hr />
-			 <IssueTable issues={issues}/>	
+			 <IssueTable issues={this.state.issues}/>	
 			 <hr />
 			 <IssueAdd/>	
 			 <hr />
