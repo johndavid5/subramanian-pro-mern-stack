@@ -86,7 +86,9 @@ class IssueList extends React.Component {
 
 		this.state = { issues: [] };
 
-		// More efficient to bind once, and re-use...
+		// More efficient to bind once, and re-use this permanently
+		// bound version of createTestIssue...but isn't it more
+		// readable to call it createTestIssueBound()...?
 		// https://zhenyong.github.io/react/docs/reusable-components.html
 		this.createTestIssue = this.createTestIssue.bind(this);
 
@@ -117,7 +119,7 @@ class IssueList extends React.Component {
 	// method to indicate that the component is ready...
 	// that is, mounted and placed into the DOM... 
 	componentDidMount(){
-		alert("this.loadData()...");
+		console.log("this.loadData()...");
 		this.loadData();
 	}
 
@@ -146,7 +148,7 @@ class IssueList extends React.Component {
 	}
 
 	createTestIssue(){
-		alert("createTestIssue()...");
+		console.log("createTestIssue()...");
 		this.createIssue({
 			status: 'New',
 			owner: 'Kumbhakarna',
@@ -162,6 +164,7 @@ class IssueList extends React.Component {
 			 <IssueFilter />	
 			 <hr />
 			 <IssueTable issues={this.state.issues}/>	
+			 <button onClick={this.createTestIssue}>Add</button>
 			 <hr />
 			 <IssueAdd/>	
 			 <hr />
