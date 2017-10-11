@@ -59,9 +59,47 @@ class IssueTable extends React.Component {
 }
 
 class IssueAdd extends React.Component {
+	constructor(){
+		super();
+
+		// bind once, re-use many times...
+		this.handleSubmit = this.handleSubmit.bind(this);
+	}
+
+	handleSubmit(e){
+		e.preventDefault();
+		var form = document.forms.issueAdd;
+		this.props.createIssue({
+			owner: form.owner.value,
+			title: form.title.value,
+			status: 'New',
+			created: new Date(),
+		});
+		// Clear the form for the next input
+		form.owner.value = "";
+		form.title.value = "";
+	}
+
+	handleClear(){
+		document.forms.issueAdd.owner.value="";
+		document.forms.issueAdd.title.value="";
+	}
+
+	handleReset(){
+		document.forms.issueAdd.owner.value="Kumbhakarna";
+		document.forms.issueAdd.title.value="Get rid of flying monkeys.";
+	}
+
 	render(){
 		return (
-			<div>This is a placeholder for the Issue Add Entry Form.</div>
+		<div>
+			<form name="issueAdd" onSubmit={this.handleSubmit}>	
+				<input type="text" name="owner" defaultValue="Kumbhakarna" placeholder="Owner" />
+				<input type="text" name="title" defaultValue="Get rid of flying monkeys" placeholder="Title" />
+				<button type="submit">Add</button>
+				<button onClick={this.handleReset}>Reset</button>
+			</form>
+		</div>
 		);
 	}
 }
@@ -70,12 +108,22 @@ const issues = [
   {
     id: 1, status: 'Open', owner: 'Ravana',
     created: new Date('2016-08-15'), effort: 5, completionDate: undefined,
-    title: 'Error in console when clicking Add',
+    title: 'Get rid of Rama.',
   },
   {
-    id: 2, status: 'Assigned', owner: 'Surpanakha',
+    id: 2, status: 'Open', owner: 'Rama',
+    created: new Date('2016-08-15'), effort: 5, completionDate: undefined,
+    title: 'Get rid of Ravana.',
+  },
+  {
+    id: 3, status: 'Assigned', owner: 'Surpanakha',
     created: new Date('2016-08-16'), effort: 14, completionDate: new Date('2016-08-30'),
-    title: 'Missing bottom border on panel',
+    title: 'Get rid of Sita.',
+  },
+  {
+    id: 4, status: 'Assigned', owner: 'Sita',
+    created: new Date('2016-08-16'), effort: 14, completionDate: new Date('2016-08-30'),
+    title: 'Get rid of Surpanakha.',
   },
 ];
 
@@ -86,33 +134,8 @@ class IssueList extends React.Component {
 
 		this.state = { issues: [] };
 
-		// More efficient to bind once, and re-use this permanently
-		// bound version of createTestIssue...but isn't it more
-		// readable to call it createTestIssueBound()...?
-		// https://zhenyong.github.io/react/docs/reusable-components.html
-		this.createTestIssue = this.createTestIssue.bind(this);
-
-		setTimeout( this.createTestIssue, 2000 );
-
-		// Automatically create test issue in 2 seconds...
-		//setTimeout( this.createTestIssue.bind(this), 2000 );
-
-		// Or, use ES2015 arrow function to preserve "this"...
-		// or use lexical this, that is pick up this from
-		// the surroundings, rather than the caller's this...
-		// setTimeout( () => this.createTestIssue(), 2000 );
-
-		// Or use everyone's favorite, old-fashioned hack...
-		// use the "self=this" lexically "sealed" into this
-		// function's lexical scope...
-
-		// For fun article on closures in loops, see...
-		// ...https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures/
-		// this is similar to a portion of the "you don't know js scopes and closures"
-		// book...
-
-		// var self = this;
-		// setTimeout( function(){ self.createTestIssue()}, 2000 );
+		// Bind once...re-use multiple times...
+		this.createIssue = this.createIssue.bind(this);
 	}
 
 	// A bit like onLoad() in a web page...a React Lifecycle
@@ -147,15 +170,15 @@ class IssueList extends React.Component {
 		this.setState({issues: newIssues });
 	}
 
-	createTestIssue(){
-		console.log("createTestIssue()...");
-		this.createIssue({
-			status: 'New',
-			owner: 'Kumbhakarna',
-			created: new Date(),
-			title: 'Completion date should be optional'
-		});
-	}
+	//createTestIssue(){
+	//	console.log("createTestIssue()...");
+	//	this.createIssue({
+	//		status: 'New',
+	//		owner: 'Kumbhakarna',
+	//		created: new Date(),
+	//		title: 'Completion date should be optional'
+	//	});
+	//}
 	
 	render(){
 		return (
@@ -164,9 +187,8 @@ class IssueList extends React.Component {
 			 <IssueFilter />	
 			 <hr />
 			 <IssueTable issues={this.state.issues}/>	
-			 <button onClick={this.createTestIssue}>Add</button>
 			 <hr />
-			 <IssueAdd/>	
+			 <IssueAdd createIssue={this.createIssue} />	
 			 <hr />
 			</div>
 		);

@@ -28,7 +28,8 @@
   },
   "homepage": "https://github.com/johndavid5/subramanian-pro-mern-stack#readme",
   "dependencies": {
-    "express": "^4.16.1"
+    "express": "^4.16.1",
+    "serve-favicon": "^2.4.5"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
