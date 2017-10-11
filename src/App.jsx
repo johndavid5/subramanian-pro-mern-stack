@@ -80,9 +80,11 @@ const issues = [
 ];
 
 class IssueList extends React.Component {
+
 	constructor(){
 		super();
-		this.state = { issues: issues };
+
+		this.state = { issues: [] };
 
 		// More efficient to bind once, and re-use...
 		// https://zhenyong.github.io/react/docs/reusable-components.html
@@ -109,6 +111,23 @@ class IssueList extends React.Component {
 
 		// var self = this;
 		// setTimeout( function(){ self.createTestIssue()}, 2000 );
+	}
+
+	// A bit like onLoad() in a web page...a React Lifecycle
+	// method to indicate that the component is ready...
+	// that is, mounted and placed into the DOM... 
+	componentDidMount(){
+		alert("this.loadData()...");
+		this.loadData();
+	}
+
+	// Simulates an asynchronous AJAX callback...
+	loadData(){
+		// No need to use bind() since arrow functions
+		// use the lexical this...
+		setTimeout( ()=>{
+			this.setState({issues: issues});
+		}, 500 );
 	}
 
 	createIssue(newIssue){
