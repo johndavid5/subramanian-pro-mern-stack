@@ -1,4 +1,4 @@
-const VERSION = "1.1.5";
+const VERSION = "1.1.6";
 
 console.log("App.js, VERSION " + VERSION );
 
@@ -12,32 +12,46 @@ class IssueFilter extends React.Component {
 	}
 }
 
-class IssueRow extends React.Component {
-	render(){
-		console.log("IssueRow::render()...");
-		//const borderedStyle = {border: "1px solid silver", padding: 4}; // 4 -> 4px
-		const issue = this.props.issue;
-		return (
-			<tr>
-				<td>{issue.id}</td>
-				<td>{issue.status}</td>
-				<td>{issue.owner}</td>
-				<td>{issue.created.toDateString()}</td>
-				<td>{issue.effort}</td>
-				<td>{issue.completionDate?issue.completionDate.toDateString():''}</td>
-				<td>{issue.title}</td>
-			</tr>
-		);
-	}
-}
+// For performance reasons, stateless components
+// should be written as functions rather than classes.
+// The view is a pure function of its props.
+const IssueRow = (props)=>(
+	<tr>
+		<td>{props.issue.id}</td>
+		<td>{props.issue.status}</td>
+		<td>{props.issue.owner}</td>
+		<td>{props.issue.created.toDateString()}</td>
+		<td>{props.issue.effort}</td>
+		<td>{IssueHelper.handleNullDate(props.issue.completionDate)}</td>
+		<td>{props.issue.title}</td>
+	</tr>
+);
 
-class IssueTable extends React.Component {
-	render(){
-		// ILLYA KURYAKIN: Replace nekulturney inline styles weeth classes, tovarischi...
-		//const borderedStyle = {border: "1px solid silver", padding: 6};
-		// NAPOLEON SOLO: And map issues JSON prop array to
-		// an array of IssueRow's...
-		const issueRows = this.props.issues.map(issue=><IssueRow key={issue.id} issue={issue}/>);
+//class IssueRow extends React.Component {
+//	render(){
+//		console.log("IssueRow::render()...");
+//		//const borderedStyle = {border: "1px solid silver", padding: 4}; // 4 -> 4px
+//		const issue = this.props.issue;
+//		return (
+//			<tr>
+//				<td>{issue.id}</td>
+//				<td>{issue.status}</td>
+//				<td>{issue.owner}</td>
+//				<td>{issue.created.toDateString()}</td>
+//				<td>{issue.effort}</td>
+//				<td>{issue.completionDate?issue.completionDate.toDateString():''}</td>
+//				<td>{issue.title}</td>
+//			</tr>
+//		);
+//	}
+//}
+
+// For performance reasons, stateless components
+// should be written as functions rather than classes.
+// The view is a pure function of its props.
+function IssueTable(props){
+
+		const issueRows = props.issues.map((issue) => (<IssueRow key={issue.id} issue={issue}/>));
 
 		return (
 		<table className="bordered-table">
@@ -55,8 +69,35 @@ class IssueTable extends React.Component {
 		  <tbody>{issueRows}</tbody>
 		</table>
 		);
-	}
 }
+
+//class IssueTable extends React.Component {
+//	render(){
+//		// ILLYA KURYAKIN: Replace nekulturney inline styles weeth classes, tovarischi...
+//		//const borderedStyle = {border: "1px solid silver", padding: 6};
+//		// NAPOLEON SOLO: And map issues JSON prop array to
+//		// an array of IssueRow's...
+//		const issueRows = this.props.issues.map(issue=><IssueRow key={issue.id} issue={issue}/>);
+//
+//		return (
+//		<table className="bordered-table">
+//		  <thead>
+//		    <tr>
+//		      <th>Id</th>
+//		      <th>Status</th>
+//		      <th>Owner</th>
+//		      <th>Created</th>
+//		      <th>Effort</th>
+//		      <th>Completion Date</th>
+//		      <th>Title</th>
+//			</tr>
+//            </thead>
+//		  <tbody>{issueRows}</tbody>
+//		</table>
+//		);
+//	}
+//}
+//
 
 class IssueAdd extends React.Component {
 	constructor(){
@@ -135,6 +176,9 @@ class IssueList extends React.Component {
 		this.state = { issues: [] };
 
 		// Bind once...re-use multiple times...
+		// actually, you must bind it here in 
+		// the constructor since it's now being
+		// called from another component...
 		this.createIssue = this.createIssue.bind(this);
 	}
 
@@ -192,6 +236,12 @@ class IssueList extends React.Component {
 			 <hr />
 			</div>
 		);
+	}
+}
+
+class IssueHelper {
+	static handleNullDate(leDate){
+		return ( leDate ? leDate.toDateString(): "" );
 	}
 }
 
