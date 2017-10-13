@@ -1,0 +1,4 @@
+REM curl -s "http://localhost:3000/api/issues --date '{"title": "Get rid of flying monkeys", "owner": "Kumbhakarna"}' --header 'Content-Type: application/json'
+REM curl "http://localhost:3000/api/issues --data '{"title": "Get rid of flying monkeys", "owner": "Kumbhakarna"}' --header 'Content-Type: application/json'
+REM curl "http://localhost:3000/api/issues" -v --noproxy localhost --header "Content-Type: application/json" -XPOST --data "{\"title\": \"Get rid of flying monkeys\", \"owner\": \"Kumbhakarna\"}" 2>&1 | tee curl-create-issue.out
+curl "http://localhost:3000/api/issues" --noproxy localhost --trace-ascii curl-create-issue.trace-ascii.out --header "Content-Type: application/json" --data "{\"title\": \"Get rid of flying monkeys\", \"owner\": \"Kumbhakarna\"}" 2>&1 | tee curl-create-issue.out

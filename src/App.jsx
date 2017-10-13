@@ -186,7 +186,7 @@ class IssueList extends React.Component {
 	// method to indicate that the component is ready...
 	// that is, mounted and placed into the DOM... 
 	componentDidMount(){
-		console.log("this.loadData()...");
+		console.log("componentDidMount(): calling this.loadData()...");
 		this.loadData();
 	}
 
