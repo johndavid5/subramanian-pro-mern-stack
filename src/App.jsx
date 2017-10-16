@@ -1,4 +1,4 @@
-const VERSION = "1.1.6";
+const VERSION = "1.1.8";
 
 console.log("App.js, VERSION " + VERSION );
 
@@ -186,17 +186,47 @@ class IssueList extends React.Component {
 	// method to indicate that the component is ready...
 	// that is, mounted and placed into the DOM... 
 	componentDidMount(){
-		console.log("this.loadData()...");
+		var sWho = "componentDidMount";
+		console.log(`${sWho}: Calling this.loadData()...`);
 		this.loadData();
 	}
 
 	// Simulates an asynchronous AJAX callback...
 	loadData(){
+		var sWho = "loadData";
 		// No need to use bind() since arrow functions
 		// use the lexical this...
-		setTimeout( ()=>{
-			this.setState({issues: issues});
-		}, 500 );
+		//setTimeout( ()=>{
+		//	this.setState({issues: issues});
+		//}, 500 );
+
+		let url = "/api/issues";
+
+		console.log(sWho + "(): Calling fetch(\"" + url + "\")...\n");
+
+		fetch(url)
+		.then( (response)=>{
+			console.log(sWho + "(): recievied response = ", response);
+			console.log(sWho + "(): returning response.json = ", response.json());
+			return response.json()
+			}
+		)
+		.then( data=>{
+			console.log(sWho + "(): recievied data = ", data );
+			console.log(sWho + "(): Total count of records:", data._metadata.total_count);
+			data.records.forEach(issue=>{
+				// Convert from ISO string to Date object...
+				issue.created = new Date(issue.created);
+				if( issue.completionData){
+					issue.completionDate = new Date(issue.completionDate);
+				}
+			});
+
+			console.log(sWho + "(): Calling this.setState({ issues: data.records })...");
+			this.setState({ issues: data.records });
+		}).catch(err => {
+			console.log(sWho + "(): D'oh!: ", err );
+		});
 	}
 
 	createIssue(newIssue){
