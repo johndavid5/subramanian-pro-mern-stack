@@ -1,4 +1,4 @@
-const VERSION = "1.1.6";
+const VERSION = "1.1.8";
 
 console.log("App.js, VERSION " + VERSION );
 
@@ -15,17 +15,22 @@ class IssueFilter extends React.Component {
 // For performance reasons, stateless components
 // should be written as functions rather than classes.
 // The view is a pure function of its props.
-const IssueRow = (props)=>(
+//const IssueRow = (props)=>(
+const IssueRow = (props)=>{
+ 	console.log("IssueRow: props = ", props); 
+	return (
 	<tr>
 		<td>{props.issue.id}</td>
 		<td>{props.issue.status}</td>
 		<td>{props.issue.owner}</td>
 		<td>{props.issue.created.toDateString()}</td>
 		<td>{props.issue.effort}</td>
-		<td>{IssueHelper.handleNullDate(props.issue.completionDate)}</td>
+		<td>{props.issue.completionDate ? props.issue.completionDate.toDateString() : ""}</td>
 		<td>{props.issue.title}</td>
 	</tr>
-);
+	)
+}
+//);
 
 //class IssueRow extends React.Component {
 //	render(){
@@ -145,28 +150,28 @@ class IssueAdd extends React.Component {
 	}
 }
 
-const issues = [
-  {
-    id: 1, status: 'Open', owner: 'Ravana',
-    created: new Date('2016-08-15'), effort: 5, completionDate: undefined,
-    title: 'Get rid of Rama.',
-  },
-  {
-    id: 2, status: 'Open', owner: 'Rama',
-    created: new Date('2016-08-15'), effort: 5, completionDate: undefined,
-    title: 'Get rid of Ravana.',
-  },
-  {
-    id: 3, status: 'Assigned', owner: 'Surpanakha',
-    created: new Date('2016-08-16'), effort: 14, completionDate: new Date('2016-08-30'),
-    title: 'Get rid of Sita.',
-  },
-  {
-    id: 4, status: 'Assigned', owner: 'Sita',
-    created: new Date('2016-08-16'), effort: 14, completionDate: new Date('2016-08-30'),
-    title: 'Get rid of Surpanakha.',
-  },
-];
+//const issues = [
+//  {
+//    id: 1, status: 'Open', owner: 'Ravana',
+//    created: new Date('2016-08-15'), effort: 5, completionDate: undefined,
+//    title: 'Get rid of Rama.',
+//  },
+//  {
+//    id: 2, status: 'Open', owner: 'Rama',
+//    created: new Date('2016-08-15'), effort: 5, completionDate: undefined,
+//    title: 'Get rid of Ravana.',
+//  },
+//  {
+//    id: 3, status: 'Assigned', owner: 'Surpanakha',
+//    created: new Date('2016-08-16'), effort: 14, completionDate: new Date('2016-08-30'),
+//    title: 'Get rid of Sita.',
+//  },
+//  {
+//    id: 4, status: 'Assigned', owner: 'Sita',
+//    created: new Date('2016-08-16'), effort: 14, completionDate: new Date('2016-08-30'),
+//    title: 'Get rid of Surpanakha.',
+//  },
+//];
 
 class IssueList extends React.Component {
 
@@ -186,17 +191,48 @@ class IssueList extends React.Component {
 	// method to indicate that the component is ready...
 	// that is, mounted and placed into the DOM... 
 	componentDidMount(){
-		console.log("componentDidMount(): calling this.loadData()...");
+		var sWho = "componentDidMount";
+		console.log(`${sWho}: Calling this.loadData()...`);
 		this.loadData();
 	}
 
 	// Simulates an asynchronous AJAX callback...
 	loadData(){
+		var sWho = "loadData";
 		// No need to use bind() since arrow functions
 		// use the lexical this...
-		setTimeout( ()=>{
-			this.setState({issues: issues});
-		}, 500 );
+		//setTimeout( ()=>{
+		//	this.setState({issues: issues});
+		//}, 500 );
+
+		let url = "/api/issues";
+
+		console.log(sWho + "(): Calling fetch(\"" + url + "\")...\n");
+
+		fetch(url)
+		.then( (response)=>{
+			console.log(sWho + "(): recievied response = ", response);
+			var returno = response.json();
+			console.log(sWho + "(): returning response.json = ", returno );
+			return returno;
+			}
+		)
+		.then( data=>{
+			console.log(sWho + "(): recievied data = ", data );
+			console.log(sWho + "(): Total count of records:", data._metadata.total_count);
+			data.records.forEach(issue=>{
+				// Convert from ISO string to Date object...
+				issue.created = new Date(issue.created);
+				if( issue.completionDate){
+					issue.completionDate = new Date(issue.completionDate);
+				}
+			});
+
+			console.log(sWho + "(): Calling this.setState({ issues: data.records = ", data.records, "})...");
+			this.setState({ issues: data.records });
+		}).catch(err => {
+			console.log(sWho + "(): D'oh!: ", err );
+		});
 	}
 
 	createIssue(newIssue){
