@@ -1,4 +1,4 @@
-const VERSION = "1.1.8";
+const VERSION = "1.2.10";
 
 console.log("App.js, VERSION " + VERSION );
 
@@ -115,12 +115,14 @@ class IssueAdd extends React.Component {
 	handleSubmit(e){
 		e.preventDefault();
 		var form = document.forms.issueAdd;
+
 		this.props.createIssue({
 			owner: form.owner.value,
 			title: form.title.value,
 			status: 'New',
 			created: new Date(),
 		});
+
 		// Clear the form for the next input
 		form.owner.value = "";
 		form.title.value = "";
@@ -236,18 +238,52 @@ class IssueList extends React.Component {
 	}
 
 	createIssue(newIssue){
-		// Use Array.slice() to create a shallow copy...
-		// copy references of object elements...make copies
-		// of primitive elements...
-		const newIssues = this.state.issues.slice();
-		newIssue.id = this.state.issues.length + 1;
-		newIssues.push(newIssue);
-		// When React sees the state being modified
-		// via setState(), it triggers a rerendering
-		// process for the component, and _all_descendent_
-		// components where properties get affected because
-		// of the state change.
-		this.setState({issues: newIssues });
+		// Use Array.slice() to create a shallow copy, meaning
+		// it copies references of object elements...and makes
+		// copies of primitive elements...
+		//
+		// const newIssues = this.state.issues.slice();
+		// newIssue.id = this.state.issues.length + 1;
+		// newIssues.push(newIssue);
+		//
+		// this.setState({issues: newIssues });
+
+		fetch("/api/issues", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify(newIssue),			
+		})
+		.then( response => response.json() )
+		.then( updatedIssue => {
+
+			updatedIssue.created = new Date(updatedIssue.created);
+
+			if( updatedIssue.completionDate ){
+				updatedIssue.completionDate = new Date(updatedIssue.completionDate);
+			}
+
+			// The concat() method is used to merge two or more
+			// arrays. This method does not change the existing arrays, 			// but instead returns a new array.
+			const newIssues = this.state.issues.concat(updatedIssue);
+
+			// Remember the state is immutable, so you 
+			// cannot make modifications to it...
+			// So we use the concat() function of Array
+			// which creates a copy of the original array,
+			// and therefore is safe.
+
+			// When React sees the state being modified
+			// via setState(), it triggers a rerendering
+			// process for the component, and _all_descendent_
+			// components where properties get affected because
+			// of the state change.
+			this.setState({issues: newIssues});
+		}).catch( err => {
+			alert("Error in sending data to server: " + 
+				err.message
+			);
+		});
+		
 	}
 
 	//createTestIssue(){
