@@ -6,3 +6,12 @@ Full Stack Web App Development with Mongo, Express, React, and Node
 by Vasan Subramanian (Author)
 ISBN-13: 978-1484226520
 ISBN-10: 1484226526
+
+/* Promises, Promises... */
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+	
+/* Fetch API */
+https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
+	
+/* Link Header for Rest API -- including pagination metadata */
+https://developer.github.com/v3/guides/traversing-with-pagination/

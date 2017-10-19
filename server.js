@@ -62,20 +62,82 @@ const issues = [
 		res.send(JSON.stringify({_metadata: metadata, records: issues}, replacer, space));
 	});
 
+	const validIssueStatus = {
+		New: true,
+		Open: true,
+		Assigned: true,
+		Fixed: true,
+		Verified: true,
+		Closed: true,
+	};
+
+	const issueFieldType = {
+		id: 'required',
+		status: 'required',
+		owner: 'required',
+		effort: 'optional',
+		created: 'required',
+		completionDate: 'optional',
+		title: 'required',
+	};
+
+	/**
+	* returns null for valid issue,
+	* otherwise returns error string.
+	*/
+	function validateIssue(issue){
+		for(const field in issueFieldType){
+			const type = issueFieldType[field];
+			if( ! type ){
+				// delete fields that do not belong
+				delete issue[field];
+			}
+			else if(type === 'required' && ! issue[field]){
+				return `${field} is required.`;
+			}
+		}
+
+		if(!validIssueStatus[issue.status]){
+			return `${issue.status} is not valid status`;
+		}
+
+		return null; // success
+	};
+
 	app.post("/api/issues", (req, res) => {
 		// body-parse automagically parsed JSON 
 		// in Request body, and converted to
 		// a Java object...
 		const newIssue = req.body;
-		console.log("app.post(\"\/api\/issues\"): received body = ", req.body );
+		const sWho = "app.post(\"\/api\/issues\")";
+		console.log(`${sWho}: received body = `, req.body );
+
 		newIssue.id = issues.length + 1;
 		newIssue.created = new Date();
 		if(!newIssue.status){	
 			newIssue.status = "New";
 		}
+
+		const err = validateIssue(newIssue);
+		if( err ){
+			// Error 422: Unprocessable Entity
+			
+			const oMessage = { message: `Invalid request: ${err}`};
+			const iErrCode = 422;
+			console.log(`${sWho}: sending res.status(${iErrCode}) and res.json(`, oMessage, `)`);
+			res.status(iErrCode).json(oMessage);
+			// res.status(422);	
+			// res.json({message: `Invalid request: ${err}`});
+
+			// For malformed JSON, you can use Error 400: Bad Request,
+			// which is more appropriate for a malformed or
+			// syntactically incorrect request.
+			return;
+		}
+
 		issues.push(newIssue);
 
-		console.log("app.post(\"\/api\/issues\"): sending res = newIssue = ", newIssue );
+		console.log(`${sWho}: sending res = newIssue = `, newIssue );
 		res.json(newIssue);
 	});
 

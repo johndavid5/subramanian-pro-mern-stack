@@ -76,33 +76,6 @@ function IssueTable(props){
 		);
 }
 
-//class IssueTable extends React.Component {
-//	render(){
-//		// ILLYA KURYAKIN: Replace nekulturney inline styles weeth classes, tovarischi...
-//		//const borderedStyle = {border: "1px solid silver", padding: 6};
-//		// NAPOLEON SOLO: And map issues JSON prop array to
-//		// an array of IssueRow's...
-//		const issueRows = this.props.issues.map(issue=><IssueRow key={issue.id} issue={issue}/>);
-//
-//		return (
-//		<table className="bordered-table">
-//		  <thead>
-//		    <tr>
-//		      <th>Id</th>
-//		      <th>Status</th>
-//		      <th>Owner</th>
-//		      <th>Created</th>
-//		      <th>Effort</th>
-//		      <th>Completion Date</th>
-//		      <th>Title</th>
-//			</tr>
-//            </thead>
-//		  <tbody>{issueRows}</tbody>
-//		</table>
-//		);
-//	}
-//}
-//
 
 class IssueAdd extends React.Component {
 	constructor(){
@@ -253,38 +226,46 @@ class IssueList extends React.Component {
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(newIssue),			
 		})
-		.then( response => response.json() )
-		.then( updatedIssue => {
+		.then( response => {
+			if( response.ok ){
+				response.json()
+				.then(updatedIssue=>{
+					// Convert ISO 8601 date string to a Date object...
+					updatedIssue.created = new Date(updatedIssue.created);
+					if( updatedIssue.completionDate ){
+						updatedIssue.completionDate = new Date(updatedIssue.completionDate);
+					}
 
-			updatedIssue.created = new Date(updatedIssue.created);
-
-			if( updatedIssue.completionDate ){
-				updatedIssue.completionDate = new Date(updatedIssue.completionDate);
+					// The concat() method is used to merge two or more
+					// arrays. This method does not change the existing arrays, 			// but instead returns a new array.
+					const newIssues = this.state.issues.concat(updatedIssue);
+					// Remember the state is immutable, so you 
+					// cannot make modifications to it...
+					// So we use the concat() function of Array
+					// which creates a copy of the original array,
+					// and therefore is safe.
+		
+					// When React sees the state being modified
+					// via setState(), it triggers a rerendering
+					// process for the component, and _all_descendent_
+					// components where properties get affected because
+					// of the state change.
+					this.setState({issues: newIssues});
+				});
 			}
-
-			// The concat() method is used to merge two or more
-			// arrays. This method does not change the existing arrays, 			// but instead returns a new array.
-			const newIssues = this.state.issues.concat(updatedIssue);
-
-			// Remember the state is immutable, so you 
-			// cannot make modifications to it...
-			// So we use the concat() function of Array
-			// which creates a copy of the original array,
-			// and therefore is safe.
-
-			// When React sees the state being modified
-			// via setState(), it triggers a rerendering
-			// process for the component, and _all_descendent_
-			// components where properties get affected because
-			// of the state change.
-			this.setState({issues: newIssues});
-		}).catch( err => {
+			else {
+				response.json()
+				.then(error => {
+					alert(`Failed to add issue: ${error.message}`);
+				});
+			}
+		})
+		.catch( err => {
 			alert("Error in sending data to server: " + 
 				err.message
 			);
 		});
-		
-	}
+	}/* createIssue() */
 
 	//createTestIssue(){
 	//	console.log("createTestIssue()...");

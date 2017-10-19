@@ -3,6 +3,7 @@ call git add .gitignore
 call git add status.bat
 call git add add-em.bat
 call git add v.bat
+call git add README.txt
 
 call git add curl/curl-create-issue.bat
 call git add curl/curl-get-issues.bat
