@@ -3,13 +3,14 @@ const favicon = require('serve-favicon');
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
 
-const config = require('./config');
+const Config = require('../config.js');
+const Issue = require('./issue');
 
 // Instantiate the application...
 const app = express();
 
 // JDA 2017-10-11: use favicon middleware to serve up the favicon.
-app.use(favicon(__dirname + '/public/images/favicon.ico'));
+app.use(favicon(__dirname + '/../public/images/favicon.ico'));
 
 // Mount the "static" middleware to serve static web pages
 // from the filesystem...
@@ -47,47 +48,6 @@ app.get("/api/issues", (req, res) => {
 });
 
 
-const validIssueStatus = {
-	New: true,
-	Open: true,
-	Assigned: true,
-	Fixed: true,
-	Verified: true,
-	Closed: true,
-};
-
-const issueFieldType = {
-	status: 'required',
-	owner: 'required',
-	effort: 'optional',
-	created: 'required',
-	completionDate: 'optional',
-	title: 'required',
-};
-
-/**
-* returns null for valid issue,
-* otherwise returns error string.
-*/
-function validateIssue(issue){
-	for(const field in issueFieldType){
-		const type = issueFieldType[field];
-		if( ! type ){
-			// delete fields that do not belong
-			delete issue[field];
-		}
-		else if(type === 'required' && ! issue[field]){
-			return `${field} is required.`;
-		}
-	}
-
-	if(!validIssueStatus[issue.status]){
-		return `${issue.status} is not valid status`;
-	}
-
-	return null; // success
-};
-
 app.post("/api/issues", (req, res) => {
 	// body-parse automagically parsed JSON 
 	// in Request body, and converted to
@@ -105,7 +65,7 @@ app.post("/api/issues", (req, res) => {
 		newIssue.status = "New";
 	}
 
-	const err = validateIssue(newIssue);
+	const err = Issue.validateIssue(newIssue);
 	if( err ){
 		// Error 422: Unprocessable Entity
 		
@@ -141,12 +101,12 @@ app.post("/api/issues", (req, res) => {
 }); /* app.post("/api/issues",...) */
 
 let db;
-MongoClient.connect(config.DB_URL)
+MongoClient.connect(Config.DB_URL)
 .then(
 	connection => {
 		db = connection;
-		app.listen(config.PORT, ()=>{
-			console.log("App started on port " + config.PORT);
+		app.listen(Config.PORT, ()=>{
+			console.log("App started on port " + Config.PORT);
 		});
 }).catch(error => {
 	console.log("ERROR:", error);
