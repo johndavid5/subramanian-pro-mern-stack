@@ -1,6 +1,9 @@
-import IssueList from "./IssueList.jsx";
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-const VERSION = "1.2.11";
+import IssueList from './IssueList.jsx';
+
+const VERSION = "1.2.12";
 
 console.log("**** App.js, VERSION " + VERSION + " ***");
 
