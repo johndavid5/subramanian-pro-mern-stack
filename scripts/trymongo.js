@@ -100,6 +100,22 @@ function testWithPromisesParadigm(){
 	});
 }
 
+
+// Uses  ES2015 generator functions, which 
+// can be exited temporarily via yield statements
+// and called again.  Between multiple calls, the
+// function retains the execution state.  These
+// functions are declared using an asterisk after
+// the function keyword, like function*()
+//
+// A module called "co" takes advantage of ES2015
+// generators and promises to make asynchronous
+// calls look sequential.  It achieves this by
+// asking you to sequence the asynchronous calls
+// within one function.  Then, the "co" module
+// makes multiple calls to this funciton, where 
+// each asynchronous step temporarily exits the
+// function...
 function testWithGeneratorParadigm(){
 	var sWho = "testWithGeneratorParadigm";
 	console.log(sWho + "()...");
@@ -124,9 +140,54 @@ function testWithGeneratorParadigm(){
 	});
 }
 
+// This module provides a method called
+// "waterfall" which lets you pipe the
+// result of one asynchronous call 
+// to another.  The method takes
+// an array of functions to run.  Each
+// function is passed the results of the
+// previous function, and a callback
+// (which takes an error and results as its
+// parameters).  Each function in the array
+// must call this callback when it's done.
+// The results are passed through as a 
+// waterfall from one function to the next,
+// that is, the outputs of one are
+// passed to the next.
 function testWithAsyncModule(){
 	var sWho = "testWithAsyncModule";
 	console.log(sWho + "()...");
 
-}
+	const async = require('async');
+	let db;
+	async.waterfall([
+		next => {
+			MongoClient.connect(DB_URL, next);
+		},
+
+		(connection, next) => {
+			db = connection;
+			db.collection('employees').insertOne({id: 1, name: 'D. Async'}, next);
+		},
+
+		(insertResult, next) => {
+			console.log("Insert result:", insertResult.insertedId);
+			db.collection("employees").find({id: 1}).toArray(next);
+		},
+
+		(docs, next) => {
+			console.log("Result of find:", docs);
+			db.close();
+			next(null, "All done");
+		},
+	], (err, result)=>{
+		if(err){
+			console.log("ERROR", err);
+		}
+		else{
+			console.log(result);
+		}
+	});
+
+}/* testWithAsyncModule() */
 

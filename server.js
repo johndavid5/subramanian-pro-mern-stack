@@ -1,6 +1,7 @@
 const express = require('express');
 const favicon = require('serve-favicon');
 const bodyParser = require('body-parser');
+const MongoClient = require('mongodb').MongoClient;
 
 const config = require('./config');
 
@@ -24,123 +25,129 @@ app.use(bodyParser.json());
 // of JSON to client when you call res.json(output);
 app.set('json spaces', 2);
 
-const issues = [
-  {
-    id: 1, status: 'Open', owner: 'Ravana',
-    created: new Date('2016-08-15'), effort: 5, completionDate: undefined,
-    title: 'Get rid of Rama.',
-  },
-  {
-    id: 2, status: 'Open', owner: 'Rama',
-    created: new Date('2016-08-15'), effort: 5, completionDate: undefined,
-    title: 'Get rid of Ravana.',
-  },
-  {
-    id: 3, status: 'Assigned', owner: 'Surpanakha',
-    created: new Date('2016-08-16'), effort: 14, completionDate: new Date('2016-08-30'),
-    title: 'Get rid of Sita.',
-  },
-  {
-    id: 4, status: 'Assigned', owner: 'Sita',
-    created: new Date('2016-08-16'), effort: 14, completionDate: new Date('2016-08-30'),
-    title: 'Get rid of Surpanakha.',
-  },
-];
 
-	app.get("/api/issues", (req, res) => {
+app.get("/api/issues", (req, res) => {
+
+	var sWho = "app.get(\"\/api\/issues\")";
+
+	console.log(`${sWho}: hitting up mongdb for issues...`);
+
+	db.collection("issues").find().toArray()
+	.then( issues => {
 		const metadata = { total_count: issues.length };
 
-		// In Shorthand:
-		//res.json({_metadata: metadata, records: issues});
+		console.log(`${sWho}: sending json, metadata = `, metadata );
+		res.json({_metadata: metadata, records: issues });
 
-		console.log("app.get(\"\/api\/issues\"): sending json, metadata = ", metadata );
-
-		// In Longhand:
-		res.set("Content-Type", "application/json");	
-		var replacer = null;
-		var space = 2; // For pretty printing...indent 2 spaces...
-		res.send(JSON.stringify({_metadata: metadata, records: issues}, replacer, space));
+	})
+	.catch( error => {
+		console.log(`${sWho}: Caught an error: ${error}...Sending Code 500 to client...` );
+		res.status(500).json({message: `Internal Server Error: ${error}`});
 	});
+});
 
-	const validIssueStatus = {
-		New: true,
-		Open: true,
-		Assigned: true,
-		Fixed: true,
-		Verified: true,
-		Closed: true,
-	};
 
-	const issueFieldType = {
-		id: 'required',
-		status: 'required',
-		owner: 'required',
-		effort: 'optional',
-		created: 'required',
-		completionDate: 'optional',
-		title: 'required',
-	};
+const validIssueStatus = {
+	New: true,
+	Open: true,
+	Assigned: true,
+	Fixed: true,
+	Verified: true,
+	Closed: true,
+};
 
-	/**
-	* returns null for valid issue,
-	* otherwise returns error string.
-	*/
-	function validateIssue(issue){
-		for(const field in issueFieldType){
-			const type = issueFieldType[field];
-			if( ! type ){
-				// delete fields that do not belong
-				delete issue[field];
-			}
-			else if(type === 'required' && ! issue[field]){
-				return `${field} is required.`;
-			}
+const issueFieldType = {
+	status: 'required',
+	owner: 'required',
+	effort: 'optional',
+	created: 'required',
+	completionDate: 'optional',
+	title: 'required',
+};
+
+/**
+* returns null for valid issue,
+* otherwise returns error string.
+*/
+function validateIssue(issue){
+	for(const field in issueFieldType){
+		const type = issueFieldType[field];
+		if( ! type ){
+			// delete fields that do not belong
+			delete issue[field];
 		}
-
-		if(!validIssueStatus[issue.status]){
-			return `${issue.status} is not valid status`;
+		else if(type === 'required' && ! issue[field]){
+			return `${field} is required.`;
 		}
+	}
 
-		return null; // success
-	};
+	if(!validIssueStatus[issue.status]){
+		return `${issue.status} is not valid status`;
+	}
 
-	app.post("/api/issues", (req, res) => {
-		// body-parse automagically parsed JSON 
-		// in Request body, and converted to
-		// a Java object...
-		const newIssue = req.body;
-		const sWho = "app.post(\"\/api\/issues\")";
-		console.log(`${sWho}: received body = `, req.body );
+	return null; // success
+};
 
-		newIssue.id = issues.length + 1;
-		newIssue.created = new Date();
-		if(!newIssue.status){	
-			newIssue.status = "New";
+app.post("/api/issues", (req, res) => {
+	// body-parse automagically parsed JSON 
+	// in Request body, and converted to
+	// a Java object...
+	const newIssue = req.body;
+
+	const sWho = "app.post(\"\/api\/issues\")";
+
+	console.log(`${sWho}: received body = `, req.body );
+
+	//newIssue.id = issues.length + 1;
+
+	newIssue.created = new Date();
+	if(!newIssue.status){	
+		newIssue.status = "New";
+	}
+
+	const err = validateIssue(newIssue);
+	if( err ){
+		// Error 422: Unprocessable Entity
+		
+		const oMessage = { message: `Invalid request: ${err}`};
+		const iErrCode = 422;
+		console.log(`${sWho}: sending res.status(${iErrCode}) and res.json(`, oMessage, `)`);
+		res.status(iErrCode).json(oMessage);
+		// res.status(422);	
+		// res.json({message: `Invalid request: ${err}`});
+
+		// For malformed JSON, you can use Error 400: Bad Request,
+		// which is more appropriate for a malformed or
+		// syntactically incorrect request.
+		return;
+	}
+
+	db.collection("issues").insertOne(newIssue)
+	.then( (result) => {
+		return db.collection("issues").find({_id: result.insertedId}).limit(1).next();
 		}
-
-		const err = validateIssue(newIssue);
-		if( err ){
-			// Error 422: Unprocessable Entity
-			
-			const oMessage = { message: `Invalid request: ${err}`};
-			const iErrCode = 422;
-			console.log(`${sWho}: sending res.status(${iErrCode}) and res.json(`, oMessage, `)`);
-			res.status(iErrCode).json(oMessage);
-			// res.status(422);	
-			// res.json({message: `Invalid request: ${err}`});
-
-			// For malformed JSON, you can use Error 400: Bad Request,
-			// which is more appropriate for a malformed or
-			// syntactically incorrect request.
-			return;
-		}
-
-		issues.push(newIssue);
-
-		console.log(`${sWho}: sending res = newIssue = `, newIssue );
+	)
+	.then(newIssue=>{
+		console.log(`${sWho}: sending res.json(newIssue = `, newIssue, `)...`);
 		res.json(newIssue);
+	})
+	.catch(error => {
+		var err_response = {message: `Internal Server Error: ${error}`};
+
+		console.log(`${sWho}: sending res.status(500).json(`, err_response, `)...`);
+		res.status(500).json( err_response );
 	});
 
-	app.listen(config.port, function(){
-		console.log("App listening on port " + config.port);	
-	});
+}); /* app.post("/api/issues",...) */
+
+let db;
+MongoClient.connect(config.DB_URL)
+.then(
+	connection => {
+		db = connection;
+		app.listen(config.PORT, ()=>{
+			console.log("App started on port " + config.PORT);
+		});
+}).catch(error => {
+	console.log("ERROR:", error);
+});

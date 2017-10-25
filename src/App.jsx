@@ -20,7 +20,7 @@ const IssueRow = (props)=>{
  	console.log("IssueRow: props = ", props); 
 	return (
 	<tr>
-		<td>{props.issue.id}</td>
+		<td>{props.issue._id}</td>
 		<td>{props.issue.status}</td>
 		<td>{props.issue.owner}</td>
 		<td>{props.issue.created.toDateString()}</td>
@@ -32,31 +32,13 @@ const IssueRow = (props)=>{
 }
 //);
 
-//class IssueRow extends React.Component {
-//	render(){
-//		console.log("IssueRow::render()...");
-//		//const borderedStyle = {border: "1px solid silver", padding: 4}; // 4 -> 4px
-//		const issue = this.props.issue;
-//		return (
-//			<tr>
-//				<td>{issue.id}</td>
-//				<td>{issue.status}</td>
-//				<td>{issue.owner}</td>
-//				<td>{issue.created.toDateString()}</td>
-//				<td>{issue.effort}</td>
-//				<td>{issue.completionDate?issue.completionDate.toDateString():''}</td>
-//				<td>{issue.title}</td>
-//			</tr>
-//		);
-//	}
-//}
 
 // For performance reasons, stateless components
 // should be written as functions rather than classes.
 // The view is a pure function of its props.
 function IssueTable(props){
 
-		const issueRows = props.issues.map((issue) => (<IssueRow key={issue.id} issue={issue}/>));
+		const issueRows = props.issues.map((issue) => (<IssueRow key={issue._id} issue={issue}/>));
 
 		return (
 		<table className="bordered-table">
@@ -125,28 +107,6 @@ class IssueAdd extends React.Component {
 	}
 }
 
-//const issues = [
-//  {
-//    id: 1, status: 'Open', owner: 'Ravana',
-//    created: new Date('2016-08-15'), effort: 5, completionDate: undefined,
-//    title: 'Get rid of Rama.',
-//  },
-//  {
-//    id: 2, status: 'Open', owner: 'Rama',
-//    created: new Date('2016-08-15'), effort: 5, completionDate: undefined,
-//    title: 'Get rid of Ravana.',
-//  },
-//  {
-//    id: 3, status: 'Assigned', owner: 'Surpanakha',
-//    created: new Date('2016-08-16'), effort: 14, completionDate: new Date('2016-08-30'),
-//    title: 'Get rid of Sita.',
-//  },
-//  {
-//    id: 4, status: 'Assigned', owner: 'Sita',
-//    created: new Date('2016-08-16'), effort: 14, completionDate: new Date('2016-08-30'),
-//    title: 'Get rid of Surpanakha.',
-//  },
-//];
 
 class IssueList extends React.Component {
 
@@ -171,14 +131,9 @@ class IssueList extends React.Component {
 		this.loadData();
 	}
 
-	// Simulates an asynchronous AJAX callback...
+	
 	loadData(){
 		var sWho = "loadData";
-		// No need to use bind() since arrow functions
-		// use the lexical this...
-		//setTimeout( ()=>{
-		//	this.setState({issues: issues});
-		//}, 500 );
 
 		let url = "/api/issues";
 
@@ -186,29 +141,37 @@ class IssueList extends React.Component {
 
 		fetch(url)
 		.then( (response)=>{
-			console.log(sWho + "(): recievied response = ", response);
-			var returno = response.json();
-			console.log(sWho + "(): returning response.json = ", returno );
-			return returno;
-			}
-		)
-		.then( data=>{
-			console.log(sWho + "(): recievied data = ", data );
-			console.log(sWho + "(): Total count of records:", data._metadata.total_count);
-			data.records.forEach(issue=>{
-				// Convert from ISO string to Date object...
-				issue.created = new Date(issue.created);
-				if( issue.completionDate){
-					issue.completionDate = new Date(issue.completionDate);
-				}
-			});
 
-			console.log(sWho + "(): Calling this.setState({ issues: data.records = ", data.records, "})...");
-			this.setState({ issues: data.records });
-		}).catch(err => {
-			console.log(sWho + "(): D'oh!: ", err );
+			console.log(sWho + "(): recievied response = ", response);
+			if( response.ok ){
+				response.json()
+				.then( data => {
+					console.log("Total count of records:", data._metadata.total_count );
+
+					data.records.forEach(issue=>{
+						// Convert from ISO string to Date object...
+						issue.created = new Date(issue.created);
+						if( issue.completionDate){
+							issue.completionDate = new Date(issue.completionDate);
+						}
+					});
+
+					this.setState({ issues: data.records });
+
+				});
+			}
+			else{
+				response.json()
+				.then(error =>{
+					alert("Failed to fetch issues:" + error.message);
+				});
+			}
+		})
+		.catch(err => {
+			alert("HTTP Error in fetching data from server:", err);
 		});
-	}
+
+	}/* loadData() */
 
 	createIssue(newIssue){
 		// Use Array.slice() to create a shallow copy, meaning
