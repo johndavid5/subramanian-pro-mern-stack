@@ -1,5 +1,5 @@
 const webpack = require('webpack');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
+//const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
 	entry: {
@@ -13,7 +13,7 @@ module.exports = {
 	plugins: [
 		// DEPRECATED: new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.bundle.js')
 		new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.bundle.js'}),
-		new FaviconsWebpackPlugin('./public/images/favicon.ico')
+		//new HtmlWebpackPlugin({ favicon: 'public/images/favicon.ico'})
 	],
 	module: {
 		loaders: [

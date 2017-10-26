@@ -13,6 +13,10 @@ const contentNode = document.getElementById('contents');
 // Render the component inside the content Node
 ReactDOM.render(<IssueList></IssueList>, contentNode);
 
+if(module.hot){
+	module.hot.accept();
+}
+
 console.log("John...?  How's your arm, John...?");
 console.log("Let off some steam, Bennett!");
 
