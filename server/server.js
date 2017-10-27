@@ -1,10 +1,22 @@
-const express = require('express');
-const favicon = require('serve-favicon');
-const bodyParser = require('body-parser');
-const MongoClient = require('mongodb').MongoClient;
+import 'babel-polyfill';
+import SourceMapSupport from 'source-map-support';
+SourceMapSupport.install();
 
-const Config = require('../config.js');
-const Issue = require('./issue');
+import express from 'express';
+import bodyParser from 'body-parser';
+import favicon from 'serve-favicon';
+import {MongoClient} from 'mongodb';
+
+//const Config = require('../config.js');
+//const Issue = require('./issue');
+import Config from '../config';
+import Issue from './issue';
+import logger from '../logger'; // gets log4j...
+
+//throw new Error('Test!');
+logger.info("I'll be back, Bennett!");
+logger.info("Let off some steam, Bennett!");
+
 
 // Instantiate the application...
 const app = express();

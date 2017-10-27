@@ -37,5 +37,10 @@ module.exports = {
 				target: 'http://localhost:3000'
 			}
 		}
-	}
+	},
+	// Maps *.jsx to *.js...so that the original *.jsx
+	// files will be available in your browser's dev
+	// tools...supposedly...and you can set breakpoints
+	// in the *.jsx files...
+	devtool: 'source-map',
 };

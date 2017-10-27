@@ -1,5 +1,5 @@
-'use strict'; /* strict -- important for node 4.5 for allowing use of const */ 
-
+//'use strict'; /* strict -- important for node 4.5 for allowing use of const */ 
+import logger from '../logger'; 
 
 const validIssueStatus = {
 	New: true,
@@ -43,6 +43,11 @@ function validateIssue(issue){
 	return null; // success
 };
 
-module.exports = {
+//module.exports = {
+//	validateIssue: validateIssue
+//};
+
+export default {
 	validateIssue: validateIssue
 };
+
