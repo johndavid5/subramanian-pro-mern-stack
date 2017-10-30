@@ -1,5 +1,12 @@
+*~
+*.out
+dist
 node_modules
 static/App.js
 status.txt
-*~
-*.out
+static/app.bundle.js
+static/vendor.bundle.js
+static/app.bundle.js.map
+static/vendor.bundle.js.map
+
+

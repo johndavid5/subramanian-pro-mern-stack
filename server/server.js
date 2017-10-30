@@ -43,7 +43,7 @@ app.get("/api/issues", (req, res) => {
 
 	var sWho = "app.get(\"\/api\/issues\")";
 
-	console.log(`${sWho}: hitting up mongdb for issues...`);
+	console.log(`${sWho}: hitting up mongodb for issues...`);
 
 	db.collection("issues").find().toArray()
 	.then( issues => {

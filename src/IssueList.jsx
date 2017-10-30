@@ -1,15 +1,15 @@
 import React from 'react';
 import 'whatwg-fetch';
 
-import IssueAdd from "./IssueAdd.jsx";
-import IssueFilter from "./IssueFilter.jsx";
+import IssueAdd from './IssueAdd.jsx';
+import IssueFilter from './IssueFilter.jsx';
 
 // For performance reasons, stateless components
 // should be written as functions rather than classes.
 // The view is a pure function of its props.
 //const IssueRow = (props)=>(
 const IssueRow = (props)=>{
- 	console.log("IssueRow: props = ", props); 
+ 	console.log('IssueRow: props = ', props); 
 	return (
 	<tr>
 		<td>{props.issue._id}</td>

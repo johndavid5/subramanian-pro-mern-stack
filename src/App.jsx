@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom';
 
 import IssueList from './IssueList.jsx';
 
-const VERSION = "1.2.13";
+const VERSION = '1.2.13';
 
-console.log("**** App.js, VERSION " + VERSION + " ***");
-console.log("I'll be back, Bennett!");
+console.log(`**** App.js, VERSION ${VERSION} ***`);
+console.log('I\'ll be back, Bennett!');
 
 const contentNode = document.getElementById('contents');
 
@@ -18,12 +18,12 @@ if(module.hot){
 	module.hot.accept();
 }
 
-console.log("John...?  How's your arm, John...?");
-console.log("Why don't you come over and find out...?");
-console.log("Let off some steam, Bennett!");
+console.log('John...?  How\'s your arm, John...?');
+console.log('Why don\'t you come over and find out...?');
+console.log('Let off some steam, Bennett!');
 
 class IssueHelper {
 	static handleNullDate(leDate){
-		return ( leDate ? leDate.toDateString(): "" );
+		return ( leDate ? leDate.toDateString(): '' );
 	}
 }
