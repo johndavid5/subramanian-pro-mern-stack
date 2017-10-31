@@ -1,7 +1,10 @@
 {
   "extends": "airbnb",
   "rules": {
+    "import/extensions":["off"],
+    "linebreak-style":["off"],
     "no-underscore-dangle": "off",
-    "no-param-reassign": ["error", { "props": false }]
+    "no-param-reassign": ["error", { "props": false }],
+    "no-console":["off"],
   }
 }

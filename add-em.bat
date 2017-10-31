@@ -3,6 +3,8 @@ call git add .gitignore
 call git add status.bat
 call git add add-em.bat
 call git add v.bat
+call git add l.bat
+call git add lf.bat
 call git add README.txt
 call git add .eslintrc
 
