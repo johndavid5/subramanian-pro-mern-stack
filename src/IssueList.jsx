@@ -1,4 +1,7 @@
 import React from 'react';
+/* Update for React 16.0.0: PropTypes is now required as a separate module
+* ...it's no longer available via React.PropTypes.
+*/
 import PropTypes from 'prop-types';
 
 import 'whatwg-fetch';

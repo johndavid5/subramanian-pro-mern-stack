@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {Router, Route, hashHistory} from 'react-router';
 
 import IssueList from './IssueList.jsx';
+import IssueEdit from './IssueEdit.jsx';
 
 const VERSION = '1.2.13';
 
@@ -10,8 +12,19 @@ console.log('I\'ll be back, Bennett!');
 
 const contentNode = document.getElementById('contents');
 
+const NoMatch = () => <p>Page Not Found</p>;
+
+const RoutedApp = () => (
+  <Router history={hashHistory}>
+    <Route path="/" component={IssueList}/>
+    <Route path="/issueEdit" component={IssueEdit}/>
+    <Route path="*" component={NoMatch}/>
+  </Router>
+);
+
 // Render the component inside the content Node
-ReactDOM.render(<IssueList />, contentNode);
+//ReactDOM.render(<IssueList />, contentNode);
+ReactDOM.render(<RoutedApp/>, contentNode);
 
 // Accept Hot Module Replacement (HMR)...
 if (module.hot) {
