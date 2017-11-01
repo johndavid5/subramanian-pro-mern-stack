@@ -9,10 +9,11 @@ const VERSION = '1.2.13';
 
 console.log(`**** App.js, VERSION ${VERSION} ***`);
 console.log('I\'ll be back, Bennett!');
+console.log('Let off some steam, Bennett!');
 
 const contentNode = document.getElementById('contents');
 
-const NoMatch = () => <p>Page Not Found</p>;
+const NoMatch = () => <h1>Page Not Found</h1>;
 
 const RoutedApp = () => (
   <Router history={hashHistory}>

@@ -45,9 +45,9 @@
     "log4js": "^2.3.10",
     "mongodb": "^2.2.33",
     "prop-types": "^15.6.0",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
-    "react-router": "^4.2.0",
+    "react": "^15.3.1",
+    "react-dom": "^15.3.1",
+    "react-router": "^2.7.0",
     "serve-favicon": "^2.4.5",
     "source-map-support": "^0.5.0",
     "whatwg-fetch": "^2.0.3"
