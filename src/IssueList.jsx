@@ -10,6 +10,7 @@ import {Link} from 'react-router';
 
 import IssueAdd from './IssueAdd.jsx';
 import IssueFilter from './IssueFilter.jsx';
+import Utils from './Utils.jsx';
 
 // For performance reasons, stateless components
 // should be written as functions rather than classes.
@@ -206,7 +207,7 @@ export default class IssueList extends React.Component {
         <IssueAdd createIssue={this.createIssue} />
         <hr />
 		{(function(props) {
-          if (props.location.query.debug) {
+          if (Utils.stringToBool(props.location.query.debug)) {
             return (<pre>this.props={JSON.stringify(props, null, 2)}</pre>);
           }
         })(this.props)}

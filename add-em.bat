@@ -31,5 +31,6 @@ call git add ./src/IssueAdd.jsx
 call git add ./src/IssueEdit.jsx
 call git add ./src/IssueFilter.jsx
 call git add ./src/IssueList.jsx
+call git add ./src/Utils.jsx
 call git add ./src/.eslintrc
 
