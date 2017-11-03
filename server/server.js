@@ -40,11 +40,20 @@ app.use(bodyParser.json());
 app.set('json spaces', 2);
 
 app.get('/api/issues', (req, res) => {
+
   const sWho = 'app.get("/api/issues")';
 
-  console.log(`${sWho}: hitting up mongodb for issues...`);
+  console.log('${sWho}: req.query = ', req.query );
 
-  db.collection('issues').find().toArray()
+  const filter = {};
+
+  if( req.query.status ){
+    filter.status = req.query.status;
+  }
+
+  console.log('${sWho}: db.collection(\'issues\').find( filter = ', filter, ')...'); 
+
+  db.collection('issues').find( filter ).toArray()
     .then((issues) => {
       const metadata = { total_count: issues.length };
 

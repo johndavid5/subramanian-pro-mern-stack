@@ -7,6 +7,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
     return (
       <div>
         <h1>This is a placeholder for editing issue {this.props.params.id}.</h1>
+		<pre>this.props = {JSON.stringify(this.props, null, 2)}</pre>
         <Link to="/issues">Back to issue list</Link>		
       </div>
     );

@@ -78,12 +78,25 @@ export default class IssueList extends React.Component {
     this.createIssue = this.createIssue.bind(this);
   }
 
-  // A bit like onLoad() in a web page...a React Lifecycle
-  // method to indicate that the component is ready...
+  // A React lifecycle method to indicate that
+  // the component is ready...
   // that is, mounted and placed into the DOM...
+  //...a bit like onLoad() in a web page...
   componentDidMount() {
     const sWho = 'componentDidMount';
     console.log(`${sWho}: Calling this.loadData()...`);
+    this.loadData();
+  }
+
+  // A React lifecycle method to indicate that
+  // a property - any property - of the component
+  // has changed.
+  componentDidUpdate(prevProps){
+    const oldQuery = prevProps.location.query;
+    const newQuery = this.props.location.query;
+    if( oldQuery.status === newQuery.status ){
+      return;
+    }
     this.loadData();
   }
 
@@ -91,7 +104,8 @@ export default class IssueList extends React.Component {
   loadData() {
     const sWho = 'loadData';
 
-    const url = '/api/issues';
+    //const url = '/api/issues';
+    const url = `/api/issues${this.props.location.search}`;
 
     console.log(`${sWho}(): Calling fetch("${url}")...\n`);
 
@@ -191,8 +205,13 @@ export default class IssueList extends React.Component {
         <hr />
         <IssueAdd createIssue={this.createIssue} />
         <hr />
+		<pre>this.props={JSON.stringify(this.props, null, 2)}</pre>
       </div>
     );
   }
 }
+
+IssueList.propTypes = {
+  location: React.PropTypes.object.isRequired,
+};
 
