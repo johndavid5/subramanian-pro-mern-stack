@@ -111,7 +111,7 @@ export default class IssueList extends React.Component {
 
     fetch(url)
       .then((response) => {
-        console.log(`${sWho}(): recievied response = `, response);
+        console.log(`${sWho}(): recieved response = `, response);
         if (response.ok) {
           response.json()
             .then((data) => {
@@ -205,7 +205,11 @@ export default class IssueList extends React.Component {
         <hr />
         <IssueAdd createIssue={this.createIssue} />
         <hr />
-		<pre>this.props={JSON.stringify(this.props, null, 2)}</pre>
+		{(function(props) {
+          if (props.location.query.debug) {
+            return (<pre>this.props={JSON.stringify(props, null, 2)}</pre>);
+          }
+        })(this.props)}
       </div>
     );
   }
