@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import 'whatwg-fetch';
-import {Link} from 'react-router';
+import { Link } from 'react-router';
 
 import IssueAdd from './IssueAdd.jsx';
 import IssueFilter from './IssueFilter.jsx';
@@ -77,12 +77,15 @@ export default class IssueList extends React.Component {
     // the constructor since it's now being
     // called from another component...
     this.createIssue = this.createIssue.bind(this);
+
+    this.setFilter = this.setFilter.bind(this);
   }
+
 
   // A React lifecycle method to indicate that
   // the component is ready...
   // that is, mounted and placed into the DOM...
-  //...a bit like onLoad() in a web page...
+  // ...a bit like onLoad() in a web page...
   componentDidMount() {
     const sWho = 'componentDidMount';
     console.log(`${sWho}: Calling this.loadData()...`);
@@ -92,20 +95,25 @@ export default class IssueList extends React.Component {
   // A React lifecycle method to indicate that
   // a property - any property - of the component
   // has changed.
-  componentDidUpdate(prevProps){
+  componentDidUpdate(prevProps) {
     const oldQuery = prevProps.location.query;
     const newQuery = this.props.location.query;
-    if( oldQuery.status === newQuery.status ){
+    if (oldQuery.status === newQuery.status) {
       return;
     }
     this.loadData();
   }
 
+  /* e.g., setFilter({status: 'Open'}); */
+  setFilter(query) {
+    // Keep the pathname the same, modify only the query string...
+    this.props.router.push({ pathname: this.props.location.pathname, query });
+  }
 
   loadData() {
     const sWho = 'loadData';
 
-    //const url = '/api/issues';
+    // const url = '/api/issues';
     const url = `/api/issues${this.props.location.search}`;
 
     console.log(`${sWho}(): Calling fetch("${url}")...\n`);
@@ -200,17 +208,18 @@ export default class IssueList extends React.Component {
     return (
       <div>
         <h1>Issue Tracker</h1>
-        <IssueFilter />
+        <IssueFilter setFilter={this.setFilter} />
         <hr />
         <IssueTable issues={this.state.issues} />
         <hr />
         <IssueAdd createIssue={this.createIssue} />
         <hr />
-		{(function(props) {
+        {(function (props) { // Equivalent of Angular ng-if using IIFE()
           if (Utils.stringToBool(props.location.query.debug)) {
             return (<pre>this.props={JSON.stringify(props, null, 2)}</pre>);
           }
-        })(this.props)}
+          return '';
+        }(this.props))}
       </div>
     );
   }
@@ -218,5 +227,6 @@ export default class IssueList extends React.Component {
 
 IssueList.propTypes = {
   location: React.PropTypes.object.isRequired,
+  router: React.PropTypes.object,
 };
 
