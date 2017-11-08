@@ -1,5 +1,7 @@
 call git add .gitignore
 
+call git add nwatch.bat
+call git add nstart.bat
 call git add status.bat
 call git add add-em.bat
 call git add v.bat
