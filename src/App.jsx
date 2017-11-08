@@ -1,7 +1,7 @@
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, Redirect, hashHistory, withRouter, IndexRoute } from 'react-router';
+import { Router, Route, Redirect, browserHistory, withRouter, IndexRoute } from 'react-router';
 
 import Dashboard from './Dashboard.jsx';
 import IssueList from './IssueList.jsx';
@@ -33,15 +33,27 @@ const App = (props) => (
     <div className="contents">
       {props.children}
     </div>
-    <div className="footer"> 
+    <div className="footer" style={{display: 'table', height: '130px'}}> 
 	<img src="/images/igor.130x130.c.gif" style={{float: 'left', paddingRight: '10px'}}></img>
-	<h1 style={{fontFamily: 'courier', color: 'purple'}}>I'll be back, Bennett!</h1>
-	<h1 style={{fontFamily: 'courier', color: 'blue'}}>Let off some steam, Bennett!</h1>
-    <p>
-    Full source code available at this
-    <a href="https://github.com/vasansr/pro-mern-stack">
-    GitHub repository</a>.
-    </p>
+	    <div style={{float: 'left', padding: '10px'}}>
+	    <h2 style={{display: 'tableCell', verticalAlign: 'middle', fontFamily: 'courier', color: 'blue'}}>Full Subramanian<br />
+        source code<br />
+        available at this <br />
+	    <a href="https://github.com/vasansr/pro-mern-stack" target="_blank" style={{paddingLeft: '0.25em'}}>
+	    GitHub&nbsp;repository</a>,<br />
+	    Master...
+	    </h2>
+	    </div>
+
+	    <div style={{float: 'left', padding: '10px'}}>
+	    <h2 style={{display: 'tableCell', verticalAlign: 'middle', fontFamily: 'courier', color: 'blue'}}>Johnny Geek's<br />
+        source code<br />
+        available at this <br />
+	    <a href="https://github.com/johndavid5/subramanian-pro-mern-stack" target="_blank" style={{paddingLeft: '0.25em'}}>
+	    GitHub&nbsp;repository</a>,<br />
+	    Master...
+	    </h2>
+	    </div>
     </div>
   </div>
 );
@@ -51,7 +63,7 @@ App.propTypes = {
 };
 
 const RoutedApp = () => (
-  <Router history={hashHistory}>
+  <Router history={browserHistory}>
 	{
 	  // <Redirect from="/" to="/issues" />
     }

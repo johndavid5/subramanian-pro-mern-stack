@@ -16,12 +16,21 @@ https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 /* Link Header for Rest API -- including pagination metadata */
 https://developer.github.com/v3/guides/traversing-with-pagination/
 
-For production deployment:
+For webpack-dev-server with compiling and pushing of new changes:
+-----------------------------------------------------------------
+1. Run npm run watch in one window. 
 
+2. Run npm run start-hook in another window.
+
+3. Go to http://localhost:8000
+
+
+For production deployment:
+--------------------------
 1. Run npm run compile -- this will use webpack to create ./static/app.bundle.js and
 ./static/vendor.bundle.js from ./src/*.jsx files...
 
-2. Run npm compile-server -- this will compile files in ./server to ./dist.
+2. Run npm run compile-server -- this will compile files in ./server to ./dist.
 
 3. Run npm start -- this will run the server in ./dist/server.js,
    listening on localhost:3000

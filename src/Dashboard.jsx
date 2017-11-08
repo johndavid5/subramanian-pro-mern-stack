@@ -7,7 +7,7 @@ export default class Dashboard extends React.Component { // eslint-disable-line
   render() {
     return (
       <div style={{ paddingBottom: '10px' }}>
-        <h1>This is a placeholder for the dashboard...like an index page...</h1>
+        <h1>This is a placeholder for the dashboard...like an "index" page...</h1>
         <Link to="/issues">Issue List</Link>
         {((props) => { // Equivalent of Angular ng-if using IIFE()
             /* console.log('IssueEdit: this.props=', props); */

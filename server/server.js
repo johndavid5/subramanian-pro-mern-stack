@@ -1,6 +1,7 @@
 import 'babel-polyfill';
 import SourceMapSupport from 'source-map-support';
 
+import path from 'path';
 import express from 'express';
 import bodyParser from 'body-parser';
 import favicon from 'serve-favicon';
@@ -119,6 +120,14 @@ app.post('/api/issues', (req, res) => {
       res.status(500).json(errResponse);
     });
 }); /* app.post("/api/issues",...) */
+
+// For browser history rather than hash-based
+// routing, if we don't match with any of the
+// previous routes, always return the same
+// page for an SPA: index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve('static/index.html'));
+});
 
 MongoClient.connect(Config.DB_URL)
   .then((connection) => {
