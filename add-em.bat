@@ -29,6 +29,7 @@ call git add ./server/.eslintrc
 call git add ./static/index.html
 
 call git add ./src/App.jsx
+call git add ./src/Dashboard.jsx
 call git add ./src/IssueAdd.jsx
 call git add ./src/IssueEdit.jsx
 call git add ./src/IssueFilter.jsx

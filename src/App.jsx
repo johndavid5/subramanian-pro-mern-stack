@@ -1,10 +1,12 @@
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, Redirect, hashHistory, withRouter } from 'react-router';
+import { Router, Route, Redirect, hashHistory, withRouter, IndexRoute } from 'react-router';
 
+import Dashboard from './Dashboard.jsx';
 import IssueList from './IssueList.jsx';
 import IssueEdit from './IssueEdit.jsx';
+
 
 const VERSION = '1.2.13';
 
@@ -50,8 +52,11 @@ App.propTypes = {
 
 const RoutedApp = () => (
   <Router history={hashHistory}>
-    <Redirect from="/" to="/issues" />
+	{
+	  // <Redirect from="/" to="/issues" />
+    }
     <Route path="/" component={App}>j
+      <IndexRoute component={Dashboard} />
 	  {
        /*
 	   * child component resolved as a result of route matching
