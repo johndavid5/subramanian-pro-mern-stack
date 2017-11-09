@@ -51,6 +51,25 @@ app.get('/api/issues', (req, res) => {
     filter.status = req.query.status;
   }
 
+  if (req.query.effort_lte || req.query.effort_gte ) {
+    filter.effort = {};
+
+  	if (req.query.effort_lte){
+		// parseInt(string, radix) - nota bene: docs suggest
+		// to always specify radix, since it's not guaranteed
+		// to default to 10.
+		filter.effort.$lte = parseInt(req.query.effort_lte, 10);
+	}
+
+  	if (req.query.effort_gte){
+		// parseInt(string, radix) - nota bene: docs suggest
+		// to always specify radix, since it's not guaranteed
+		// to default to 10.
+		filter.effort.$gte = parseInt(req.query.effort_gte, 10);
+	}
+	
+  }
+
   console.log(`${sWho}: db.collection("issues").find( filter = `, filter, ')...');
 
   db.collection('issues').find(filter).toArray()
