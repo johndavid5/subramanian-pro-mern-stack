@@ -20,8 +20,9 @@ const NoMatch = () => <h1>Page Not Found</h1>;
 
 const App = (props) => (
   <div>
-    <div className="header">
-      <h1>IssueTracker</h1>
+    <div className="header" style={{display: "table", width: "500px"}}>
+      <img style={{float: "left"}} src="/images/tracker.gif" />
+      <div style={{display: "table-cell",  verticalAlign: "middle", textAlign: "left"}}><h1>IssueTracker</h1></div>
     </div>
     {
      //
@@ -34,7 +35,6 @@ const App = (props) => (
       {props.children}
     </div>
     <div className="footer" style={{display: 'table', height: '130px'}}> 
-	<img src="/images/igor.130x130.c.gif" style={{float: 'left', paddingRight: '10px'}}></img>
 	    <div style={{float: 'left', padding: '10px'}}>
 	    <h2 style={{display: 'tableCell', verticalAlign: 'middle', fontFamily: 'courier', color: 'blue'}}>Full Subramanian<br />
         source code<br />
@@ -44,6 +44,8 @@ const App = (props) => (
 	    Master...
 	    </h2>
 	    </div>
+
+		<img src="/images/igor.130x130.c.gif" style={{float: 'left', paddingRight: '10px'}}></img>
 
 	    <div style={{float: 'left', padding: '10px'}}>
 	    <h2 style={{display: 'tableCell', verticalAlign: 'middle', fontFamily: 'courier', color: 'blue'}}>Johnny Geek's<br />

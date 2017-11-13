@@ -1,4 +1,10 @@
+Subramanian's Version:
+----------------------
 https://github.com/vasansr/pro-mern-stack
+
+John's Version:
+---------------
+https://github.com/johndavid5/subramanian-pro-mern-stack
 
 Pro MERN Stack:
 Full Stack Web App Development with Mongo, Express, React, and Node
@@ -30,7 +36,7 @@ For production deployment:
 1. Run npm run compile -- this will use webpack to create ./static/app.bundle.js and
 ./static/vendor.bundle.js from ./src/*.jsx files...
 
-2. Run npm run compile-server -- this will compile files in ./server to ./dist.
+2. Run npm compile-server -- this will compile files in ./server to ./dist.
 
 3. Run npm start -- this will run the server in ./dist/server.js,
    listening on localhost:3000

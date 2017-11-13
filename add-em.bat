@@ -12,6 +12,7 @@ call git add .eslintrc
 
 call git add curl/curl-create-issue.bat
 call git add curl/curl-get-issues.bat
+call git add curl/curl-get-issue-by-id.bat
 call git add curl/curl-get-issues-filtered.bat
 
 call git add notes.txt

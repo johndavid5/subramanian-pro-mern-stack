@@ -5,7 +5,7 @@ import path from 'path';
 import express from 'express';
 import bodyParser from 'body-parser';
 import favicon from 'serve-favicon';
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 // const Config = require('../config.js');
 // const Issue = require('./issue');
@@ -38,7 +38,9 @@ app.use(bodyParser.json());
 
 // Configure for automagic pretty printing
 // of JSON to client when you call res.json(output);
+// Oh, JSON, you look pretty...!
 app.set('json spaces', 2);
+
 
 app.get('/api/issues', (req, res) => {
   const sWho = 'app.get("/api/issues")';
@@ -83,6 +85,41 @@ app.get('/api/issues', (req, res) => {
       console.log(`${sWho}: Caught an error: ${error}...Sending Code 500 to client...`);
       res.status(500).json({ message: `Internal Server Error: ${error}` });
     });
+});
+
+app.get('/api/issues/:id', (req, res) => {
+
+  let issueId;
+
+  const sWho = 'app.get("/api/issues/:id")';
+  console.log(`${sWho}: req.query = `, req.query);
+
+  try {
+    console.log(`${sWho}: SHEMP: Moe, req.params.id= `, req.params.id);
+    issueId = new ObjectId(req.params.id);
+  } catch(error){
+    console.log(`${sWho}: SHEMP: Sorry, Moe, looks like new ObjectId(req.params.id="${req.params.id}") threw an error: ${error}...`);
+    res.status(422).json({message: `Invalid issue ID format: ${error}`});
+    return;
+  }
+
+  db.collection('issues').find({_id: issueId}).limit(1).next()
+  .then(
+    issue=>{
+      if( !issue ){
+    	console.log(`${sWho}: SHEMP: Sorry, Moe, looks like no such issue wit' issueId=${issueId}`);
+        res.status(404).json({message: `No such issue: ${issueId}`});
+      }
+      else {
+    	console.log(`${sWho}: SHEMP: Got dhis issue from DB, Moe: `, issue);
+        res.json(issue);
+      }
+  })
+  .catch( error => {
+    console.log(error);
+    res.status(500).json({message: `Internal Server Error: ${error}`});
+  });
+
 });
 
 
