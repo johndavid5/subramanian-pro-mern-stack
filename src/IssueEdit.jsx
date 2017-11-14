@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
 import NumInput from './NumInput.jsx';
+import DateInput from './DateInput.jsx';
 import Utils from './Utils.jsx';
 
 export default class IssueEdit extends React.Component { // eslint-disable-line
@@ -22,12 +23,14 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
         status: '',
         owner: '',
         effort: null,
-        completionDate: '',
+        completionDate: null,
         created: '',
-      }
+      },
+      invalidFields:{},
     };
 
     this.onChange = this.onChange.bind(this);
+    this.onValidityChange = this.onValidityChange.bind(this);
   }
 
   componentDidUpdate(prevProps){
@@ -65,7 +68,32 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
     this.setState({issue}, () => {
 	    console.log(`${sWho}(): setStateCallback(): this.state.issue = `, this.state.issue );
 	});
-  }
+  }/* onChange() */
+
+  onValidityChange(event, valid){
+
+    const sWho = "IssueEdit::onValidityChange";
+
+    console.log(`${sWho}(): valid = `, valid );
+
+    console.log(`${sWho}(): Before: this.state = `, this.state );
+
+    const invalidFields = Object.assign({}, this.state.invalidFields);
+    if(!valid){
+      invalidFields[event.target.name] = true;
+    } else {
+      delete invalidFields[event.target.name];
+    }
+   
+    console.log(`${sWho}(): Calling this.setState( { `, invalidFields, `} )...`);
+    this.setState( { invalidFields },
+		()=>{ 
+    		console.log(`${sWho}(): After: this.state = `, this.state );
+		}
+	);
+
+  }/* onValidityChange() */
+
 
   loadData(){
     const sWho = "IssueEdit::loadData";
@@ -75,11 +103,26 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
       if(response.ok){ 
         response.json()
         .then( issue => {
+
+          console.log(`${sWho}(): issue as returned by database = `, issue );
+
           issue.created = new Date(issue.created).toDateString();
-          issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate).toDateString():'';
-		  // store "effort" as Numeric type rather than string...
+
+		  // store "completionDate" as Date rather than string...
+          //issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate).toDateString():'';
+          issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate): null;
+
+		  // store "effort" as Numeric type rather than string...leave as is coming from database...
           //issue.effort = issue.effort != null ? issue.effort.toString():'';
-          this.setState({issue});
+		
+          console.log(`${sWho}(): issue after massaging = `, issue );
+
+          console.log(`${sWho}(): Before this.setState({issue}), this.state = `, this.state );
+          this.setState({issue}, 
+			()=>{
+              console.log(`${sWho}(): After this.setState({issue}), this.state = `, this.state );
+			}
+		  );
 		});
       } else {
         response.json()
@@ -95,6 +138,9 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
 
   render() {
     const issue = this.state.issue;
+
+    const validationMessage = Object.keys(this.state.invalidFields).length === 0 ? null : (<div className="error">Please correct invalid fields before submitting.</div>);
+
     return (
       <div style={{ paddingBottom: '10px' }}>
         <form>
@@ -115,10 +161,11 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
         <br />
         Effort: <NumInput size={5} name="effort" value={issue.effort} onChange={this.onChange} />
         <br />
-        Completion Date: <input name="completionDate" value={issue.completionDate} onChange={this.onChange} />
+        Completion Date: <DateInput name="completionDate" value={issue.completionDate} onChange={this.onChange} onValidityChange={this.onValidityChange} />
         <br />
         Title: <input name="title" size={50} value={issue.title} onChange={this.onChange} />
         <br />
+        {validationMessage}
         <button type="submit">Submit</button>
         <br />
         <Link to="/issues">Back to issue list</Link>

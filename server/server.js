@@ -24,8 +24,11 @@ const app = express();
 let db = null;
 
 // JDA 2017-10-11: use favicon middleware to serve up the favicon.
-//app.use(favicon(`${__dirname}/../public/images/favicon.ico`));
-//app.use(favicon(`${__dirname}/../static/images/favicon.ico`));
+// app.use(favicon(`${__dirname}/../public/images/favicon.ico`));
+// app.use(favicon(`${__dirname}/../static/images/favicon.ico`));
+// Or just fugedaboud foolin' widh dhis crêpe and plop favicon.ico into the ./static folder,
+// and let express.static('static') handle it at http://mysite/favicon.ico,
+// just like all the other static content...
 
 // Mount the "static" middleware to serve static web pages
 // from the filesystem...
