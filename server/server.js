@@ -24,7 +24,8 @@ const app = express();
 let db = null;
 
 // JDA 2017-10-11: use favicon middleware to serve up the favicon.
-app.use(favicon(`${__dirname}/../public/images/favicon.ico`));
+//app.use(favicon(`${__dirname}/../public/images/favicon.ico`));
+//app.use(favicon(`${__dirname}/../static/images/favicon.ico`));
 
 // Mount the "static" middleware to serve static web pages
 // from the filesystem...
@@ -41,6 +42,10 @@ app.use(bodyParser.json());
 // Oh, JSON, you look pretty...!
 app.set('json spaces', 2);
 
+//app.get('/favicon.ico', (req, res) => {
+//  const sWho = 'app.get("/favicon.ico")';
+//  console.log(`${sWho}()...`);
+//});
 
 app.get('/api/issues', (req, res) => {
   const sWho = 'app.get("/api/issues")';

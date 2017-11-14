@@ -18,40 +18,46 @@ const contentNode = document.getElementById('contents');
 
 const NoMatch = () => <h1>Page Not Found</h1>;
 
-const App = (props) => (
+const App = props => (
   <div>
-    <div className="header" style={{display: "table", width: "500px"}}>
-      <img style={{float: "left"}} src="/images/tracker.gif" />
-      <div style={{display: "table-cell",  verticalAlign: "middle", textAlign: "left"}}><h1>IssueTracker</h1></div>
+    <div className="header" style={{ display: 'table', width: '500px' }}>
+      <img style={{ float: 'left' }} alt="" src="/images/tracker.gif" />
+      <div style={{ display: 'table-cell', verticalAlign: 'middle', textAlign: 'left' }}><h1>IssueTracker</h1></div>
     </div>
     {
      //
      //   ReactRouter will pass via props.children
      //   the child component resolved as a result of
-     //   route matching 		
+     //   route matching
      //
-	}
+    }
     <div className="contents">
       {props.children}
     </div>
-    <div className="footer" style={{display: 'table', height: '130px'}}> 
-	    <div style={{float: 'left', padding: '10px'}}>
-	    <h2 style={{display: 'tableCell', verticalAlign: 'middle', fontFamily: 'courier', color: 'blue'}}>Full Subramanian<br />
+    <div className="footer" style={{ display: 'table', height: '130px' }}>
+      <div style={{ float: 'left', padding: '10px' }}>
+        <h2 style={{
+                     display: 'tableCell',
+                     verticalAlign: 'middle',
+                     fontFamily: 'courier',
+                     color: 'blue',
+        }}>Full Subramanian<br />
         source code<br />
         available at this <br />
-	    <a href="https://github.com/vasansr/pro-mern-stack" target="_blank" style={{paddingLeft: '0.25em'}}>
-	    GitHub&nbsp;repository</a>,<br />
+        <a href="https://github.com/vasansr/pro-mern-stack" target="_blank" style={{ paddingLeft: '0.25em' }}>
+        GitHub&nbsp;repository</a>,
+        <br />
 	    Master...
-	    </h2>
+        </h2>
 	    </div>
 
-		<img src="/images/igor.130x130.c.gif" style={{float: 'left', paddingRight: '10px'}}></img>
+		<img src="/images/igor.130x130.c.gif" style={{ float: 'left', paddingRight: '10px' }}></img>
 
-	    <div style={{float: 'left', padding: '10px'}}>
-	    <h2 style={{display: 'tableCell', verticalAlign: 'middle', fontFamily: 'courier', color: 'blue'}}>Johnny Geek's<br />
+	    <div style={{ float: 'left', padding: '10px' }}>
+	    <h2 style={{ display: 'tableCell', verticalAlign: 'middle', fontFamily: 'courier', color: 'blue' }}>Johnny the Geek's<br />
         source code<br />
         available at this <br />
-	    <a href="https://github.com/johndavid5/subramanian-pro-mern-stack" target="_blank" style={{paddingLeft: '0.25em'}}>
+	    <a href="https://github.com/johndavid5/subramanian-pro-mern-stack" target="_blank" style={{ paddingLeft: '0.25em' }}>
 	    GitHub&nbsp;repository</a>,<br />
 	    Master...
 	    </h2>
@@ -69,7 +75,7 @@ const RoutedApp = () => (
 	{
 	  // <Redirect from="/" to="/issues" />
     }
-    <Route path="/" component={App}>j
+    <Route path="/" component={App}>
       <IndexRoute component={Dashboard} />
 	  {
        /*

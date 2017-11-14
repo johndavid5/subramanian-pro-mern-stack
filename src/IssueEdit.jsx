@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router';
+import NumInput from './NumInput.jsx';
 import Utils from './Utils.jsx';
 
 export default class IssueEdit extends React.Component { // eslint-disable-line
@@ -20,7 +21,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
         title: '',
         status: '',
         owner: '',
-        effort: '',
+        effort: null,
         completionDate: '',
         created: '',
       }
@@ -39,17 +40,31 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
     this.loadData();
   }
 
-  onChange(event){
+  onChange(event,convertedValue){
+
     const sWho = "IssueEdit::onChange";
+
+    console.log(`${sWho}(): event.target.name = ${event.target.name}, convertedValue = `, convertedValue, `...`);
+
     console.log(`${sWho}(): before: this.state.issue = `, this.state.issue );
+
 	// issue becomes a clone of this.state.issue 
     const issue = Object.assign({}, this.state.issue);
+
+	const value = (convertedValue !== undefined )? convertedValue : event.target.value;
 	// ...then use "name" property of the form
     // element to assign the proper issue field...
-    issue[event.target.name] = event.target.value;
+    //issue[event.target.name] = event.target.value;
+    issue[event.target.name] = value;
+
 	// ...then use the usual "setState()" to make it happen...
-    this.setState({issue});
-    console.log(`${sWho}(): after setState(): this.state.issue = `, this.state.issue );
+    // ...note that setState() sets the state asynchronously,
+    // so supply a callback or use componentDidUpdate() to
+	// inspect the state after the setState() request has
+    // been satisfied...
+    this.setState({issue}, () => {
+	    console.log(`${sWho}(): setStateCallback(): this.state.issue = `, this.state.issue );
+	});
   }
 
   loadData(){
@@ -62,7 +77,8 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
         .then( issue => {
           issue.created = new Date(issue.created).toDateString();
           issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate).toDateString():'';
-          issue.effort = issue.effort != null ? issue.effort.toString():'';
+		  // store "effort" as Numeric type rather than string...
+          //issue.effort = issue.effort != null ? issue.effort.toString():'';
           this.setState({issue});
 		});
       } else {
@@ -97,7 +113,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
         <br />
         Owner: <input name="owner" value={issue.owner} onChange={this.onChange} />
         <br />
-        Effort: <input size={5} name="effort" value={issue.effort} onChange={this.onChange} />
+        Effort: <NumInput size={5} name="effort" value={issue.effort} onChange={this.onChange} />
         <br />
         Completion Date: <input name="completionDate" value={issue.completionDate} onChange={this.onChange} />
         <br />
