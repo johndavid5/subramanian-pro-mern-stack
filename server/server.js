@@ -10,8 +10,9 @@ import { MongoClient, ObjectId } from 'mongodb';
 // const Config = require('../config.js');
 // const Issue = require('./issue');
 import Config from '../config';
-import Issue from './issue';
 import logger from '../logger'; // gets log4j...
+import Issue from './issue';
+import Utils from './utils';
 
 SourceMapSupport.install();
 
@@ -156,8 +157,10 @@ app.post('/api/issues', (req, res) => {
     const iErrCode = 422;
     console.log(`${sWho}: sending res.status(${iErrCode}) and res.json(`, oMessage, ')');
     res.status(iErrCode).json(oMessage);
+	// Equivalent of these two calls...
+    // ...Can you spell C-H-A-I-N-I-N-G, Doc-tor Cy-a-nide...?
     // res.status(422);
-    // res.json({message: `Invalid request: ${err}`});
+    // res.json(oMessage);
 
     // For malformed JSON, you can use Error 400: Bad Request,
     // which is more appropriate for a malformed or
@@ -184,6 +187,115 @@ app.post('/api/issues', (req, res) => {
       res.status(500).json(errResponse);
     });
 }); /* app.post("/api/issues",...) */
+
+app.put('/api/issues/:id', (req, res) => {
+
+  const sWho = 'app.put(\'/api/issues/:id\')';
+
+  logger.info(`${sWho}(): req.params.id = `, req.params.id );
+
+  let issueId;
+
+  try {
+
+    issueId = new ObjectId(req.params.id);
+
+  } catch(error){
+
+    const oMessage = {message: `Invalid issue ID format: ${error}`};
+
+    logger.info(`${sWho}(): Sorry, Moe, trouble formin' ObjectId, sendin' back code 422 widh json `, oMessage, `...`);
+
+    res.status(422).json(oMessage);
+    return;
+  }
+
+  logger.info(`${sWho}(): issueId = `, issueId );
+
+  const issue = req.body;
+  delete issue._id;
+
+  logger.info(`${sWho}(): issue from req.body, stripped of _id = `, issue );
+
+  const err = Issue.validateIssue(issue);
+  if( err ){
+    const oMessage = { message: `Invalid request: ${err}` };
+    logger.info(`${sWho}(): Sorry, Moe, trouble wid' Issue.validateIssue() sendin' back code 422 wid' json `, oMessage, `...`);
+    res.status(422).json( oMessage );
+    return;
+  }
+
+  const issueConverted = Issue.convertIssue(issue);
+
+  logger.info(`${sWho}(): issueConverted = `, issueConverted );
+
+  logger.info(`${sWho}(): Callin' db.collection('issues').update(_id: `, issueId, `, issueConverted )...`);
+
+  db.collection('issues').update({_id: issueId }, issueConverted )
+  .then( () => {
+     return db.collection('issues').find({_id: issueId }).limit(1).next()
+  })
+  .then(savedIssue => {
+     //for( let field in savedIssue ){
+     //  logger.info(`${sWho}(): savedIssue["${field}"] = `, savedIssue[field], `, typeof(savedIssue["${field}"]) = `, typeof(savedIssue[field]), `, savedIssue[${field}].constructor.name = `, savedIssue[field].constructor.name );
+     //}
+     //logger.info(`${sWho}(): savedIssue.created = `, savedIssue.created, `, typeof(savedIssue.created) = `, typeof(savedIssue.created ) );
+     //logger.info(`${sWho}(): savedIssue.completionDate = `, savedIssue.completionDate, `, typeof(savedIssue.completionDate) = `, typeof(savedIssue.completionDate ) );
+
+     logger.debug(`${sWho}(): Utils.objectToString(savedIssue):\n`, Utils.objectToString(savedIssue, "savedIssue" ) ); 
+
+     logger.info(`${sWho}(): Sending JSON to client: savedIssue (retrieved from DB) = `, savedIssue );
+     res.json(savedIssue);
+  })
+  .catch(error => {
+     const oMessage = {message: `Internal Server Error: ${error}`};
+
+     logger.error(`${sWho}(): error with database, sending code 500 and JSON `, oMessage ); 
+     res.status(500).json( oMessage );
+  });
+
+});/* app.put('/api/issues/:id' */
+
+app.delete('/api/issues/:id', (req, res) => {
+
+  const sWho = "app.delete('/api/issues/:id')";
+
+  let issueId;
+
+  logger.info(`${sWho}(): req.params.id = `, req.params.id );
+
+  try {
+    issueId = new ObjectId( req.params.id );
+  } catch( error ) {
+	let oMessage = { message: `Invalid issue ID format: ${error}`};
+    logger.error(`${sWho}(): Returning code 422 with JSON `, oMessage);
+    res.status(422).json( oMessage );
+    return;
+  }
+
+  db.collection('issues').deleteOne({_id: issueId})
+  .then( (deleteResult) => {
+    if(deleteResult.result.n === 1 ){ 
+      let oMessage = {status: 'OK'};
+      logger.info(`${sWho}(): Returning JSON `, oMessage);
+      res.json(oMessage);
+    }
+    else{
+      // Not an error if no delete occurred because the DELETE
+      // "contract" is that the item should not longer exist, and 
+      // that is still true if the item did not exist...but, just to
+      // be nice, we can send a subtle warning...
+      let oMessage = {status: 'Warning: object not found'};
+      logger.warn(`${sWho}(): Returning JSON `, oMessage);
+      res.json( oMessage );
+    }
+  })
+  .catch( error => {
+	let oMessage = { message: `Internal Server Error: ${error}` }; 
+    logger.error(`${sWho}(): Returning code 500 with JSON `, oMessage);
+  }); 
+
+});
 
 // For browser history rather than hash-based
 // routing, if we don't match with any of the

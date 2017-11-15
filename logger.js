@@ -18,7 +18,7 @@ var log4js = require('log4js');
 // and replace with calls to logger.info()...
 //log4js.configure({ appenders: [ { type: "console" } ], replaceConsole: true })
 
-var logger = log4js.getLogger();
+var logger = log4js.getLogger("node");
 
 // logger.setLevel('INFO');
 //logger.setLevel('DEBUG');

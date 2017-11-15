@@ -12,9 +12,11 @@ call git add README.txt
 call git add .eslintrc
 
 call git add curl/curl-create-issue.bat
+call git add curl/curl-delete-issue.bat
 call git add curl/curl-get-issues.bat
 call git add curl/curl-get-issue-by-id.bat
 call git add curl/curl-get-issues-filtered.bat
+call git add curl/curl-put-issue.bat
 
 call git add notes.txt
 
@@ -27,6 +29,7 @@ call git add webpack.config.js
 call git add ./server/server.js
 call git add ./server/issue.js
 call git add ./server/start_hook.js
+call git add ./server/utils.js
 call git add ./server/.eslintrc
 
 call git add ./static/index.html
@@ -42,3 +45,4 @@ call git add ./src/NumInput.jsx
 call git add ./src/Utils.jsx
 call git add ./src/.eslintrc
 
+call git add ./test/utils-test.js
