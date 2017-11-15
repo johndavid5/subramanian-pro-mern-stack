@@ -6,9 +6,9 @@ import DateInput from './DateInput.jsx';
 import Utils from './Utils.jsx';
 
 export default class IssueEdit extends React.Component { // eslint-disable-line
-  constructor(){
-    const sWho = "IssueEdit::constructor";
-	console.log(`${sWho}()...`);
+  constructor() {
+    const sWho = 'IssueEdit::constructor';
+    console.log(`${sWho}()...`);
     super();
     // Create initial state in constructor with
     // empty string, otherwise React assumes
@@ -17,7 +17,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
     // call, React assumes we've converted an uncontrolled
     // component to a controlled one, and issues a warning.
     this.state = {
-        issue: {
+      issue: {
         _id: '',
         title: '',
         status: '',
@@ -26,7 +26,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
         completionDate: null,
         created: null,
       },
-      invalidFields:{},
+      invalidFields: {},
     };
 
     this.onChange = this.onChange.bind(this);
@@ -34,150 +34,144 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  componentDidUpdate(prevProps){
-    if(prevProps.params.id !== this.props.params.id){
+  componentDidUpdate(prevProps) {
+    if (prevProps.params.id !== this.props.params.id) {
       this.loadData();
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.loadData();
   }
 
-  onChange(event,convertedValue){
+  onChange(event, convertedValue) {
+    const sWho = 'IssueEdit::onChange';
 
-    const sWho = "IssueEdit::onChange";
+    console.log(`${sWho}(): event.target.name = ${event.target.name}, convertedValue = `, convertedValue, '...');
 
-    console.log(`${sWho}(): event.target.name = ${event.target.name}, convertedValue = `, convertedValue, `...`);
+    console.log(`${sWho}(): before: this.state.issue = `, this.state.issue);
 
-    console.log(`${sWho}(): before: this.state.issue = `, this.state.issue );
-
-	// issue becomes a clone of this.state.issue 
+    // issue becomes a clone of this.state.issue
     const issue = Object.assign({}, this.state.issue);
 
-	const value = (convertedValue !== undefined )? convertedValue : event.target.value;
-	// ...then use "name" property of the form
+    const value = (convertedValue !== undefined) ? convertedValue : event.target.value;
+    // ...then use "name" property of the form
     // element to assign the proper issue field...
-    //issue[event.target.name] = event.target.value;
+    // issue[event.target.name] = event.target.value;
     issue[event.target.name] = value;
 
-	// ...then use the usual "setState()" to make it happen...
+    // ...then use the usual "setState()" to make it happen...
     // ...note that setState() sets the state asynchronously,
     // so supply a callback or use componentDidUpdate() to
-	// inspect the state after the setState() request has
+    // inspect the state after the setState() request has
     // been satisfied...
-    this.setState({issue}, () => {
-	    console.log(`${sWho}(): setStateCallback(): this.state.issue = `, this.state.issue );
-	});
+    this.setState({ issue }, () => {
+	    console.log(`${sWho}(): setStateCallback(): this.state.issue = `, this.state.issue);
+    });
   }/* onChange() */
 
-  onValidityChange(event, valid){
+  onValidityChange(event, valid) {
+    const sWho = 'IssueEdit::onValidityChange';
 
-    const sWho = "IssueEdit::onValidityChange";
+    console.log(`${sWho}(): valid = `, valid);
 
-    console.log(`${sWho}(): valid = `, valid );
-
-    console.log(`${sWho}(): Before: this.state = `, this.state );
+    console.log(`${sWho}(): Before: this.state = `, this.state);
 
     const invalidFields = Object.assign({}, this.state.invalidFields);
-    if(!valid){
+    if (!valid) {
       invalidFields[event.target.name] = true;
     } else {
       delete invalidFields[event.target.name];
     }
-   
-    console.log(`${sWho}(): Calling this.setState( { `, invalidFields, `} )...`);
-    this.setState( { invalidFields },
-		()=>{ 
-    		console.log(`${sWho}(): After: this.state = `, this.state );
-		}
-	);
 
+    console.log(`${sWho}(): Calling this.setState( { `, invalidFields, '} )...');
+    this.setState(
+      { invalidFields },
+      () => {
+    		console.log(`${sWho}(): After: this.state = `, this.state);
+      },
+    );
   }/* onValidityChange() */
 
-  onSubmit(event){ 
-
+  onSubmit(event) {
     event.preventDefault();
 
-    if( Object.keys(this.state.invalidFields).length !== 0 ){
+    if (Object.keys(this.state.invalidFields).length !== 0) {
       return;
     }
 
     fetch(`/api/issues/${this.props.params.id}`, {
       method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(this.state.issue)
-    }).then( response => {
-      if(response.ok){
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(this.state.issue),
+    }).then((response) => {
+      if (response.ok) {
         response.json()
-        .then(updatedIssue => {
+          .then((updatedIssue) => {
+            updatedIssue.created = new Date(updatedIssue.created);
 
-          updatedIssue.created = new Date(updatedIssue.created);
+            if (updatedIssue.completionDate) {
+              updatedIssue.completionDate = new Date(updatedIssue.completionDate);
+            }
 
-          if( updatedIssue.completionDate ){
-            updatedIssue.completionDate = new Date(updatedIssue.completionDate);
-          }
+            this.setState({ issue: updatedIssue });
 
-          this.setState({ issue: updatedIssue} );
-
-          alert('Updated issue successfully.');
-        })
+            alert('Updated issue successfully.');
+          });
       } else {
         response.json()
-        .then( error => {
-          alert(`Failed to update issue: ${error.message}`);
-        });
+          .then((error) => {
+            alert(`Failed to update issue: ${error.message}`);
+          });
       }
-	}).catch( err => {
-        alert(`Error in sending data to server: ${err.message}`);
+    }).catch((err) => {
+      alert(`Error in sending data to server: ${err.message}`);
     });
-
   }/* onSubmit() */
 
 
   loadData() {
-
-    const sWho = "IssueEdit::loadData";
+    const sWho = 'IssueEdit::loadData';
 
     console.log(`${sWho}()...`);
 
     fetch(`/api/issues/${this.props.params.id}`)
-    .then( response => {
-      if(response.ok){ 
-        response.json()
-        .then( issue => {
+      .then((response) => {
+        if (response.ok) {
+          response.json()
+            .then((issue) => {
+              console.log(`${sWho}(): issue as returned by database = `, issue);
 
-          console.log(`${sWho}(): issue as returned by database = `, issue );
-
-          //issue.created = new Date(issue.created).toDateString();
-          issue.created = new Date(issue.created);
+              // issue.created = new Date(issue.created).toDateString();
+              issue.created = new Date(issue.created);
 
 		  // store "completionDate" as Date rather than string...
-          //issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate).toDateString():'';
-          issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate): null;
+              // issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate).toDateString():'';
+              issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate) : null;
 
 		  // store "effort" as Numeric type rather than string...leave as is coming from database...
-          //issue.effort = issue.effort != null ? issue.effort.toString():'';
-		
-          console.log(`${sWho}(): issue after massaging = `, issue );
+              // issue.effort = issue.effort != null ? issue.effort.toString():'';
 
-          console.log(`${sWho}(): Before this.setState({issue}), this.state = `, this.state );
-          this.setState({issue}, 
-			()=>{
-              console.log(`${sWho}(): After this.setState({issue}), this.state = `, this.state );
-			}
+              console.log(`${sWho}(): issue after massaging = `, issue);
+
+              console.log(`${sWho}(): Before this.setState({issue}), this.state = `, this.state);
+              this.setState(
+                { issue },
+                () => {
+                  console.log(`${sWho}(): After this.setState({issue}), this.state = `, this.state);
+                },
 		  );
-		});
-      } else {
-        response.json()
-        .then( error => {
-          alert(`Failed to fetch issue: ${error.message}`);
-        });
-      }
-	})
-    .catch(err => {
-      alert(`Error in fetching data from server: ${err.message}`);
-    });
+            });
+        } else {
+          response.json()
+            .then((error) => {
+              alert(`Failed to fetch issue: ${error.message}`);
+            });
+        }
+      })
+      .catch((err) => {
+        alert(`Error in fetching data from server: ${err.message}`);
+      });
   }
 
   render() {
@@ -189,40 +183,43 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
       <div style={{ paddingBottom: '10px' }}>
         <form onSubmit={this.onSubmit}>
         ID: {issue._id}
-        <br />
+          <br />
         Created: {issue.created ? issue.created.toDateString() : ''}
-        <br />
-        Status: <select name="status" value={issue.status}
-                 onChange={this.onChange}>
-                  <option value="New">New</option>
-                  <option value="Open">Open</option>
-                  <option value="Assigned">Assigned</option>
-                  <option value="Fixed">Fixed</option>
-                  <option value="Closed">Closed</option>
+          <br />
+        Status: <select
+          name="status"
+          value={issue.status}
+          onChange={this.onChange}
+        >
+          <option value="New">New</option>
+          <option value="Open">Open</option>
+          <option value="Assigned">Assigned</option>
+          <option value="Fixed">Fixed</option>
+          <option value="Closed">Closed</option>
                 </select>
-        <br />
+          <br />
         Owner: <input name="owner" value={issue.owner} onChange={this.onChange} />
-        <br />
+          <br />
         Effort: <NumInput size={5} name="effort" value={issue.effort} onChange={this.onChange} />
-        <br />
+          <br />
         Completion Date: <DateInput name="completionDate" value={issue.completionDate} onChange={this.onChange} onValidityChange={this.onValidityChange} />
-        <br />
+          <br />
         Title: <input name="title" size={50} value={issue.title} onChange={this.onChange} />
-        <br />
-        {validationMessage}
-        <button type="submit">Submit</button>
-        <br />
-        <Link to="/issues">Back to issue list</Link>
+          <br />
+          {validationMessage}
+          <button type="submit">Submit</button>
+          <br />
+          <Link to="/issues">Back to issue list</Link>
         </form>
-        {((props,state) => { // Equivalent of Angular ng-if using IIFE()
+        {((props, state) => { // Equivalent of Angular ng-if using IIFE()
             /* console.log('IssueEdit: this.props=', props); */
             /* console.log('IssueEdit: this.props.location=', this.props.location); */
             /* console.log('IssueEdit: this.props.location.query=', this.props.location.query); */
             /* console.log('IssueEdit: this.props.location.query.debug=', this.props.location.query.debug); */
             if (Utils.stringToBool(props.location.query.debug)) {
               return (<div>
-              <pre>this.state={JSON.stringify(state, null, 2)}</pre>
-              <pre>this.props={JSON.stringify(props, null, 2)}</pre>
+                <pre>this.state={JSON.stringify(state, null, 2)}</pre>
+                <pre>this.props={JSON.stringify(props, null, 2)}</pre>
               </div>
 			  );
             }

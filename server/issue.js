@@ -20,7 +20,6 @@ const issueFieldType = {
 };
 
 function cleanupIssue(issue) {
-
   const cleanedUpIssue = {};
 
   Object.keys(issue).forEach((field) => {
@@ -30,14 +29,14 @@ function cleanupIssue(issue) {
   return cleanedUpIssue;
 }
 
-function convertIssue(issue){
-  if(issue.created){
-	// Convert date string to Date object...
+function convertIssue(issue) {
+  if (issue.created) {
+    // Convert date string to Date object...
     issue.created = new Date(issue.created);
   }
 
-  if(issue.completionDate){
-	// Convert date string to Date object...
+  if (issue.completionDate) {
+    // Convert date string to Date object...
     issue.completionDate = new Date(issue.completionDate);
   }
 

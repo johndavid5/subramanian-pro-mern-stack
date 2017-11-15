@@ -1,36 +1,31 @@
 class utils {
-
-  static objectToString(object, name){
-
-	if( ! name ){
-      name = "object";
+  static objectToString(object, name) {
+    if (!name) {
+      name = 'object';
     }
 
-    if( object == null ){
-      return "null";
+    if (object == null) {
+      return 'null';
     }
 
-    let s_typeof = typeof object;
+    const s_typeof = typeof object;
 
-	if( s_typeof === "undefined" ){
-      return "undefined";
+    if (s_typeof === 'undefined') {
+      return 'undefined';
+    } else if (s_typeof !== 'object') {
+      return `(${s_typeof}) ${object}`;
     }
-    else if( s_typeof !== "object" ){
-      return "(" + s_typeof + ") " +  object;
+
+    let s_out = '';
+    for (const field in object) {
+      s_out += `${name}["${field}"] = ${JSON.stringify(object[field])}, typeof() = ${typeof (object[field])}, constructor.name = ${object[field].constructor.name}\n`;
     }
-	else {
-      let s_out = "";
-      for( let field in object ){ 
-        s_out += `${name}["${field}"] = ` + JSON.stringify(object[field]) + `, typeof() = ` + typeof(object[field]) + `, constructor.name = ` + object[field].constructor.name + "\n";
-      }
-      return s_out;
-    }
+    return s_out;
   }/* objectToString() */
-
 }
 
 // Only need module.exports for node,
 // browser gets function through windows
-// object... 
+// object...
 (typeof module !== 'undefined') &&
 (module.exports = utils);

@@ -36,7 +36,7 @@ module.exports = {
       '/api/*': {
         target: 'http://localhost:3000',
       },
-      // For browser history rather than hash-based routing... 
+      // For browser history rather than hash-based routing...
       historyApiFallback: true,
     },
   },

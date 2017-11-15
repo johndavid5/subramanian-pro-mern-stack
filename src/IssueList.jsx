@@ -12,12 +12,17 @@ import IssueAdd from './IssueAdd.jsx';
 import IssueFilter from './IssueFilter.jsx';
 import Utils from './Utils.jsx';
 
-// For performance reasons, stateless components
-// should be written as functions rather than classes.
-// The view is a pure function of its props.
-// const IssueRow = (props)=>(
 const IssueRow = (props) => {
+
   console.log('IssueRow: props = ', props);
+
+  function onDeleteClick(){
+    // Delegate to parent-supplied deleter...
+    if( confirm( "Are you sure you wish to delete this issue?" ) ){
+      props.deleteIssue(props.issue._id);
+    }
+  }
+
   return (
     <tr>
       <td><Link to={`issues/${props.issue._id}`}>{props.issue._id.substr(-4)}</Link></td>
@@ -27,21 +32,29 @@ const IssueRow = (props) => {
       <td>{props.issue.effort}</td>
       <td>{props.issue.completionDate ? props.issue.completionDate.toDateString() : ''}</td>
       <td>{props.issue.title}</td>
+      <td><button onClick={onDeleteClick}>Delete</button></td>      
     </tr>
   );
 };
-// );
 
 IssueRow.propTypes = {
-  // issue: React.PropTypes.object.isRequired,
   issue: PropTypes.object.isRequired,
+  deleteIssue: PropTypes.func.isRequired,
 };
 
 // For performance reasons, stateless components
 // should be written as functions rather than classes.
 // The view is a pure function of its props.
 function IssueTable(props) {
-  const issueRows = props.issues.map(issue => (<IssueRow key={issue._id} issue={issue} />));
+
+  var sWho = "IssueTable";
+
+  const issueRows = props.issues.map(
+    issue =>
+    (<IssueRow key={issue._id} issue={issue} deleteIssue={props.deleteIssue} />)
+  );
+
+  console.log(`${sWho}(): issueRows = `, issueRows );
 
   return (
     <table className="bordered-table">
@@ -54,6 +67,7 @@ function IssueTable(props) {
           <th>Effort</th>
           <th>Completion Date</th>
           <th>Title</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>{issueRows}</tbody>
@@ -62,12 +76,13 @@ function IssueTable(props) {
 }
 
 IssueTable.propTypes = {
-  // issues: React.PropTypes.array.isRequired,
   issues: PropTypes.array.isRequired,
+  deleteIssues: PropTypes.func.isRequired,
 };
 
 export default class IssueList extends React.Component {
   constructor() {
+
     super();
 
     this.state = { issues: [] };
@@ -79,6 +94,8 @@ export default class IssueList extends React.Component {
     this.createIssue = this.createIssue.bind(this);
 
     this.setFilter = this.setFilter.bind(this);
+
+    this.deleteIssue = this.deleteIssue.bind(this);
   }
 
 
@@ -101,15 +118,15 @@ export default class IssueList extends React.Component {
     if (oldQuery.status === newQuery.status
 		&& oldQuery.effort_gte === newQuery.effort_gte
 		&& oldQuery.effort_lte === newQuery.effort_lte
-	) {
+    ) {
       return;
     }
 
-    var sWho = "IssueList::componentDidUpdate";
+    const sWho = 'IssueList::componentDidUpdate';
 
-	console.log(`${sWho}(): oldQuery = `, oldQuery );
-	console.log(`${sWho}(): newQuery = `, newQuery );
-	console.log(`${sWho}(): Calling this.loadData()...`);
+    console.log(`${sWho}(): oldQuery = `, oldQuery);
+    console.log(`${sWho}(): newQuery = `, newQuery);
+    console.log(`${sWho}(): Calling this.loadData()...`);
 
     this.loadData();
   }
@@ -214,12 +231,26 @@ export default class IssueList extends React.Component {
       });
   }/* createIssue() */
 
+  deleteIssue(id){
+    fetch(`/api/issues/${id}`, { method: 'DELETE'}
+    ).then(response => {
+      if(!response.ok){  
+        alert('Failed to delete issue.');
+      }
+      else{
+        this.loadData();
+      }
+    });
+  }
+
+  
+
   render() {
     return (
       <div>
         <IssueFilter setFilter={this.setFilter} initFilter={this.props.location.query} />
         <hr />
-        <IssueTable issues={this.state.issues} />
+        <IssueTable issues={this.state.issues} deleteIssue={this.deleteIssue} />
         <hr />
         <IssueAdd createIssue={this.createIssue} />
         <hr />

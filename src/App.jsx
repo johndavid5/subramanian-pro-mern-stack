@@ -1,7 +1,7 @@
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, Redirect, browserHistory, withRouter, IndexRoute } from 'react-router';
+import { Router, Route, browserHistory, withRouter, IndexRoute } from 'react-router';
 
 import Dashboard from './Dashboard.jsx';
 import IssueList from './IssueList.jsx';
@@ -41,27 +41,33 @@ const App = props => (
                      verticalAlign: 'middle',
                      fontFamily: 'courier',
                      color: 'blue',
-        }}>Full Subramanian<br />
+        }}
+        >Full Subramanian<br />
         source code<br />
         available at this <br />
-        <a href="https://github.com/vasansr/pro-mern-stack" target="_blank" style={{ paddingLeft: '0.25em' }}>
-        GitHub&nbsp;repository</a>,
+          <a href="https://github.com/vasansr/pro-mern-stack" target="_blank" rel="noopener noreferrer" style={{ paddingLeft: '0.25em' }}>
+        GitHub&nbsp;repository
+          </a>,
         <br />
-	    Master...
+        Master...
         </h2>
-	    </div>
+      </div>
 
-		<img src="/images/igor.130x130.c.gif" style={{ float: 'left', paddingRight: '10px' }}></img>
+      <img src="/images/igor.130x130.c.gif" alt="Igor" style={{ float: 'left', paddingRight: '10px' }} />
 
-	    <div style={{ float: 'left', padding: '10px' }}>
-	    <h2 style={{ display: 'tableCell', verticalAlign: 'middle', fontFamily: 'courier', color: 'blue' }}>Johnny the Geek's<br />
+      <div style={{ float: 'left', padding: '10px' }}>
+        <h2 style={{
+ display: 'tableCell', verticalAlign: 'middle', fontFamily: 'courier', color: 'blue',
+}}
+        >Johnny the Geek&apos;s<br />
         source code<br />
-        available at this <br />
-	    <a href="https://github.com/johndavid5/subramanian-pro-mern-stack" target="_blank" style={{ paddingLeft: '0.25em' }}>
-	    GitHub&nbsp;repository</a>,<br />
-	    Master...
-	    </h2>
-	    </div>
+        available at this<br />
+          <a href="https://github.com/johndavid5/subramanian-pro-mern-stack" target="_blank" rel="noopener noreferrer" style={{ paddingLeft: '0.25em' }}>
+       GitHub&nbsp;repository
+          </a>,<br />
+       Master...
+        </h2>
+      </div>
     </div>
   </div>
 );
@@ -72,17 +78,17 @@ App.propTypes = {
 
 const RoutedApp = () => (
   <Router history={browserHistory}>
-	{
-	  // <Redirect from="/" to="/issues" />
+    {
+      // <Redirect from="/" to="/issues" />
     }
     <Route path="/" component={App}>
       <IndexRoute component={Dashboard} />
-	  {
+      {
        /*
-	   * child component resolved as a result of route matching
-       * will be passed to App via props.children 
-	   */
-	  }
+       * child component resolved as a result of route matching
+       * will be passed to App via props.children
+       */
+      }
       <Route path="/issues" component={withRouter(IssueList)} />
       <Route path="/issues/:id" component={IssueEdit} />
       <Route path="*" component={NoMatch} />

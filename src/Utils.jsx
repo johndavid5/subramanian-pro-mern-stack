@@ -8,7 +8,7 @@ export default class Utils {
       return false;
     }
 
-    input = '' + input; // coerce to string
+    input = `${input}`; // coerce to string
 
     if (input === 'true' || input === '1') {
       return true;

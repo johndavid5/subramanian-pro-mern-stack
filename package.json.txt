@@ -1,0 +1,10 @@
+(Since package.json does not allow comments...)
+
+// whatwg-fetch: fetch API polyfill for dinosaur browsers
+"whatwg-fetch": "^2.0.3"
+
+// Copy bootstrap dist to static for front-end...primarily for use of css,
+// since the rest will be supplied by react-bootstrap...this can also
+// be done via some fancy webpack footwork and insertion of <style>...</style>
+// into the DOM, but that's just showing off...
+"bootstrap-copy": "cp -r ./node_modules/bootstrap/dist ./static/bootstrap",

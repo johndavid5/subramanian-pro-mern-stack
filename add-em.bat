@@ -21,6 +21,7 @@ call git add curl/curl-put-issue.bat
 call git add notes.txt
 
 call git add package.json
+call git add package.json.txt
 
 call git add config.js
 call git add logger.js

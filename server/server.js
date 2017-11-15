@@ -46,10 +46,10 @@ app.use(bodyParser.json());
 // Oh, JSON, you look pretty...!
 app.set('json spaces', 2);
 
-//app.get('/favicon.ico', (req, res) => {
+// app.get('/favicon.ico', (req, res) => {
 //  const sWho = 'app.get("/favicon.ico")';
 //  console.log(`${sWho}()...`);
-//});
+// });
 
 app.get('/api/issues', (req, res) => {
   const sWho = 'app.get("/api/issues")';
@@ -62,23 +62,22 @@ app.get('/api/issues', (req, res) => {
     filter.status = req.query.status;
   }
 
-  if (req.query.effort_lte || req.query.effort_gte ) {
+  if (req.query.effort_lte || req.query.effort_gte) {
     filter.effort = {};
 
-  	if (req.query.effort_lte){
-		// parseInt(string, radix) - nota bene: docs suggest
-		// to always specify radix, since it's not guaranteed
-		// to default to 10.
-		filter.effort.$lte = parseInt(req.query.effort_lte, 10);
-	}
+  	if (req.query.effort_lte) {
+      // parseInt(string, radix) - nota bene: docs suggest
+      // to always specify radix, since it's not guaranteed
+      // to default to 10.
+      filter.effort.$lte = parseInt(req.query.effort_lte, 10);
+    }
 
-  	if (req.query.effort_gte){
-		// parseInt(string, radix) - nota bene: docs suggest
-		// to always specify radix, since it's not guaranteed
-		// to default to 10.
-		filter.effort.$gte = parseInt(req.query.effort_gte, 10);
-	}
-	
+  	if (req.query.effort_gte) {
+      // parseInt(string, radix) - nota bene: docs suggest
+      // to always specify radix, since it's not guaranteed
+      // to default to 10.
+      filter.effort.$gte = parseInt(req.query.effort_gte, 10);
+    }
   }
 
   console.log(`${sWho}: db.collection("issues").find( filter = `, filter, ')...');
@@ -97,7 +96,6 @@ app.get('/api/issues', (req, res) => {
 });
 
 app.get('/api/issues/:id', (req, res) => {
-
   let issueId;
 
   const sWho = 'app.get("/api/issues/:id")';
@@ -106,29 +104,26 @@ app.get('/api/issues/:id', (req, res) => {
   try {
     console.log(`${sWho}: SHEMP: Moe, req.params.id= `, req.params.id);
     issueId = new ObjectId(req.params.id);
-  } catch(error){
+  } catch (error) {
     console.log(`${sWho}: SHEMP: Sorry, Moe, looks like new ObjectId(req.params.id="${req.params.id}") threw an error: ${error}...`);
-    res.status(422).json({message: `Invalid issue ID format: ${error}`});
+    res.status(422).json({ message: `Invalid issue ID format: ${error}` });
     return;
   }
 
-  db.collection('issues').find({_id: issueId}).limit(1).next()
-  .then(
-    issue=>{
-      if( !issue ){
+  db.collection('issues').find({ _id: issueId }).limit(1).next()
+    .then((issue) => {
+      if (!issue) {
     	console.log(`${sWho}: SHEMP: Sorry, Moe, looks like no such issue wit' issueId=${issueId}`);
-        res.status(404).json({message: `No such issue: ${issueId}`});
-      }
-      else {
+        res.status(404).json({ message: `No such issue: ${issueId}` });
+      } else {
     	console.log(`${sWho}: SHEMP: Got dhis issue from DB, Moe: `, issue);
         res.json(issue);
       }
-  })
-  .catch( error => {
-    console.log(error);
-    res.status(500).json({message: `Internal Server Error: ${error}`});
-  });
-
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ message: `Internal Server Error: ${error}` });
+    });
 });
 
 
@@ -157,7 +152,7 @@ app.post('/api/issues', (req, res) => {
     const iErrCode = 422;
     console.log(`${sWho}: sending res.status(${iErrCode}) and res.json(`, oMessage, ')');
     res.status(iErrCode).json(oMessage);
-	// Equivalent of these two calls...
+    // Equivalent of these two calls...
     // ...Can you spell C-H-A-I-N-I-N-G, Doc-tor Cy-a-nide...?
     // res.status(422);
     // res.json(oMessage);
@@ -189,112 +184,102 @@ app.post('/api/issues', (req, res) => {
 }); /* app.post("/api/issues",...) */
 
 app.put('/api/issues/:id', (req, res) => {
-
   const sWho = 'app.put(\'/api/issues/:id\')';
 
-  logger.info(`${sWho}(): req.params.id = `, req.params.id );
+  logger.info(`${sWho}(): req.params.id = `, req.params.id);
 
   let issueId;
 
   try {
-
     issueId = new ObjectId(req.params.id);
+  } catch (error) {
+    const oMessage = { message: `Invalid issue ID format: ${error}` };
 
-  } catch(error){
-
-    const oMessage = {message: `Invalid issue ID format: ${error}`};
-
-    logger.info(`${sWho}(): Sorry, Moe, trouble formin' ObjectId, sendin' back code 422 widh json `, oMessage, `...`);
+    logger.info(`${sWho}(): Sorry, Moe, trouble formin' ObjectId, sendin' back code 422 widh json `, oMessage, '...');
 
     res.status(422).json(oMessage);
     return;
   }
 
-  logger.info(`${sWho}(): issueId = `, issueId );
+  logger.info(`${sWho}(): issueId = `, issueId);
 
   const issue = req.body;
   delete issue._id;
 
-  logger.info(`${sWho}(): issue from req.body, stripped of _id = `, issue );
+  logger.info(`${sWho}(): issue from req.body, stripped of _id = `, issue);
 
   const err = Issue.validateIssue(issue);
-  if( err ){
+  if (err) {
     const oMessage = { message: `Invalid request: ${err}` };
-    logger.info(`${sWho}(): Sorry, Moe, trouble wid' Issue.validateIssue() sendin' back code 422 wid' json `, oMessage, `...`);
-    res.status(422).json( oMessage );
+    logger.info(`${sWho}(): Sorry, Moe, trouble wid' Issue.validateIssue() sendin' back code 422 wid' json `, oMessage, '...');
+    res.status(422).json(oMessage);
     return;
   }
 
   const issueConverted = Issue.convertIssue(issue);
 
-  logger.info(`${sWho}(): issueConverted = `, issueConverted );
+  logger.info(`${sWho}(): issueConverted = `, issueConverted);
 
-  logger.info(`${sWho}(): Callin' db.collection('issues').update(_id: `, issueId, `, issueConverted )...`);
+  logger.info(`${sWho}(): Callin' db.collection('issues').update(_id: `, issueId, ', issueConverted )...');
 
-  db.collection('issues').update({_id: issueId }, issueConverted )
-  .then( () => {
-     return db.collection('issues').find({_id: issueId }).limit(1).next()
-  })
-  .then(savedIssue => {
-     //for( let field in savedIssue ){
-     //  logger.info(`${sWho}(): savedIssue["${field}"] = `, savedIssue[field], `, typeof(savedIssue["${field}"]) = `, typeof(savedIssue[field]), `, savedIssue[${field}].constructor.name = `, savedIssue[field].constructor.name );
-     //}
-     //logger.info(`${sWho}(): savedIssue.created = `, savedIssue.created, `, typeof(savedIssue.created) = `, typeof(savedIssue.created ) );
-     //logger.info(`${sWho}(): savedIssue.completionDate = `, savedIssue.completionDate, `, typeof(savedIssue.completionDate) = `, typeof(savedIssue.completionDate ) );
+  db.collection('issues').update({ _id: issueId }, issueConverted)
+    .then(() => db.collection('issues').find({ _id: issueId }).limit(1).next())
+    .then((savedIssue) => {
+      // for( let field in savedIssue ){
+      //  logger.info(`${sWho}(): savedIssue["${field}"] = `, savedIssue[field], `, typeof(savedIssue["${field}"]) = `, typeof(savedIssue[field]), `, savedIssue[${field}].constructor.name = `, savedIssue[field].constructor.name );
+      // }
+      // logger.info(`${sWho}(): savedIssue.created = `, savedIssue.created, `, typeof(savedIssue.created) = `, typeof(savedIssue.created ) );
+      // logger.info(`${sWho}(): savedIssue.completionDate = `, savedIssue.completionDate, `, typeof(savedIssue.completionDate) = `, typeof(savedIssue.completionDate ) );
 
-     logger.debug(`${sWho}(): Utils.objectToString(savedIssue):\n`, Utils.objectToString(savedIssue, "savedIssue" ) ); 
+      logger.debug(`${sWho}(): Utils.objectToString(savedIssue):\n`, Utils.objectToString(savedIssue, 'savedIssue'));
 
-     logger.info(`${sWho}(): Sending JSON to client: savedIssue (retrieved from DB) = `, savedIssue );
-     res.json(savedIssue);
-  })
-  .catch(error => {
-     const oMessage = {message: `Internal Server Error: ${error}`};
+      logger.info(`${sWho}(): Sending JSON to client: savedIssue (retrieved from DB) = `, savedIssue);
+      res.json(savedIssue);
+    })
+    .catch((error) => {
+      const oMessage = { message: `Internal Server Error: ${error}` };
 
-     logger.error(`${sWho}(): error with database, sending code 500 and JSON `, oMessage ); 
-     res.status(500).json( oMessage );
-  });
-
+      logger.error(`${sWho}(): error with database, sending code 500 and JSON `, oMessage);
+      res.status(500).json(oMessage);
+    });
 });/* app.put('/api/issues/:id' */
 
 app.delete('/api/issues/:id', (req, res) => {
-
   const sWho = "app.delete('/api/issues/:id')";
 
   let issueId;
 
-  logger.info(`${sWho}(): req.params.id = `, req.params.id );
+  logger.info(`${sWho}(): req.params.id = `, req.params.id);
 
   try {
-    issueId = new ObjectId( req.params.id );
-  } catch( error ) {
-	let oMessage = { message: `Invalid issue ID format: ${error}`};
+    issueId = new ObjectId(req.params.id);
+  } catch (error) {
+    const oMessage = { message: `Invalid issue ID format: ${error}` };
     logger.error(`${sWho}(): Returning code 422 with JSON `, oMessage);
-    res.status(422).json( oMessage );
+    res.status(422).json(oMessage);
     return;
   }
 
-  db.collection('issues').deleteOne({_id: issueId})
-  .then( (deleteResult) => {
-    if(deleteResult.result.n === 1 ){ 
-      let oMessage = {status: 'OK'};
-      logger.info(`${sWho}(): Returning JSON `, oMessage);
-      res.json(oMessage);
-    }
-    else{
+  db.collection('issues').deleteOne({ _id: issueId })
+    .then((deleteResult) => {
+      if (deleteResult.result.n === 1) {
+        const oMessage = { status: 'OK' };
+        logger.info(`${sWho}(): Returning JSON `, oMessage);
+        res.json(oMessage);
+      } else {
       // Not an error if no delete occurred because the DELETE
-      // "contract" is that the item should not longer exist, and 
+      // "contract" is that the item should not longer exist, and
       // that is still true if the item did not exist...but, just to
       // be nice, we can send a subtle warning...
-      let oMessage = {status: 'Warning: object not found'};
-      logger.warn(`${sWho}(): Returning JSON `, oMessage);
-      res.json( oMessage );
-    }
-  })
-  .catch( error => {
-	let oMessage = { message: `Internal Server Error: ${error}` }; 
-    logger.error(`${sWho}(): Returning code 500 with JSON `, oMessage);
-  }); 
-
+        const oMessage = { status: 'Warning: object not found' };
+        logger.warn(`${sWho}(): Returning JSON `, oMessage);
+        res.json(oMessage);
+      }
+    })
+    .catch((error) => {
+      const oMessage = { message: `Internal Server Error: ${error}` };
+      logger.error(`${sWho}(): Returning code 500 with JSON `, oMessage);
+    });
 });
 
 // For browser history rather than hash-based
