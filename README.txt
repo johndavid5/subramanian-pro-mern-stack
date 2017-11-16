@@ -22,6 +22,10 @@ https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 /* Link Header for Rest API -- including pagination metadata */
 https://developer.github.com/v3/guides/traversing-with-pagination/
 
+/* react-bootstrap */
+https://react-bootstrap.github.io
+https://react-bootstrap.github.io/components.html
+
 For webpack-dev-server with compiling and pushing of new changes:
 -----------------------------------------------------------------
 1. Run npm run watch in one window. 

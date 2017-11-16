@@ -1,4 +1,8 @@
 class utils {
+
+  /* WARNING: Experimental func...
+  * 
+  */
   static objectToString(object, name) {
     if (!name) {
       name = 'object';
@@ -18,7 +22,12 @@ class utils {
 
     let s_out = '';
     for (const field in object) {
-      s_out += `${name}["${field}"] = ${JSON.stringify(object[field])}, typeof() = ${typeof (object[field])}, constructor.name = ${object[field].constructor.name}\n`;
+      s_out += `${name}["${field}"] = ${JSON.stringify(object[field])}`;
+      s_out += `, typeof() = ${typeof (object[field])}`;
+      if( object[field] ){
+        s_out += `, constructor.name = ${object[field].constructor.name}`;
+      }
+      s_out += "\n";
     }
     return s_out;
   }/* objectToString() */

@@ -231,9 +231,10 @@ app.put('/api/issues/:id', (req, res) => {
       // logger.info(`${sWho}(): savedIssue.created = `, savedIssue.created, `, typeof(savedIssue.created) = `, typeof(savedIssue.created ) );
       // logger.info(`${sWho}(): savedIssue.completionDate = `, savedIssue.completionDate, `, typeof(savedIssue.completionDate) = `, typeof(savedIssue.completionDate ) );
 
-      logger.debug(`${sWho}(): Utils.objectToString(savedIssue):\n`, Utils.objectToString(savedIssue, 'savedIssue'));
+      //logger.debug(`${sWho}(): Utils.objectToString(savedIssue):\n`, Utils.objectToString(savedIssue, 'savedIssue'));
 
       logger.info(`${sWho}(): Sending JSON to client: savedIssue (retrieved from DB) = `, savedIssue);
+
       res.json(savedIssue);
     })
     .catch((error) => {

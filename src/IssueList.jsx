@@ -1,12 +1,11 @@
 import React from 'react';
 /* Update required for React 16.0.0: PropTypes is required as
-* a separate module...it will no longer available
-* via React.PropTypes.
+* a separate module...it will no longer available via React.PropTypes.
 */
 import PropTypes from 'prop-types';
-
-import 'whatwg-fetch';
+import 'whatwg-fetch'; // polyfill for Fetch API for dinosaur browsers...
 import { Link } from 'react-router';
+import { Button, Glyphicon } from 'react-bootstrap';
 
 import IssueAdd from './IssueAdd.jsx';
 import IssueFilter from './IssueFilter.jsx';
@@ -32,7 +31,9 @@ const IssueRow = (props) => {
       <td>{props.issue.effort}</td>
       <td>{props.issue.completionDate ? props.issue.completionDate.toDateString() : ''}</td>
       <td>{props.issue.title}</td>
-      <td><button onClick={onDeleteClick}>Delete</button></td>      
+      <td>
+        <Button bsSize="xsmall" onClick={onDeleteClick}><Glyphicon glyph="trash" /></Button>
+      </td>      
     </tr>
   );
 };
@@ -77,7 +78,7 @@ function IssueTable(props) {
 
 IssueTable.propTypes = {
   issues: PropTypes.array.isRequired,
-  deleteIssues: PropTypes.func.isRequired,
+  deleteIssue: PropTypes.func.isRequired,
 };
 
 export default class IssueList extends React.Component {

@@ -27,6 +27,9 @@ call git add config.js
 call git add logger.js
 call git add webpack.config.js
 
+call git add ./scripts/init.mongo.js
+call git add ./scripts/init.mongo.bat
+
 call git add ./server/server.js
 call git add ./server/issue.js
 call git add ./server/start_hook.js

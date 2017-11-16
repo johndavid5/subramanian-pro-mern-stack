@@ -33,6 +33,21 @@ db.issues.insertMany([
     created: new Date('2016-08-16'), effort: 14, completionDate: new Date('2016-08-17'),
     title: 'Rescue Sita.',
   },
+  {
+    status: 'Assigned', owner: 'Khumbakarna',
+    created: new Date('2017-09-16'), effort: 17, completionDate: undefined,
+    title: 'Get rid of flying monkeys.',
+  },
+  {
+    status: 'Assigned', owner: 'Vibhishana',
+    created: new Date('2017-09-16'), effort: 17, completionDate: new Date('2017-09-16'),
+    title: 'A mind as pure as lotus leaves.',
+  },
+  {
+    status: 'Assigned', owner: 'Tumburu',
+    created: new Date('2017-09-16'), effort: 15, completionDate: undefined,
+    title: 'A song to sing.',
+  },
 ]);
 
 db.issues.createIndex({ status: 1 });
