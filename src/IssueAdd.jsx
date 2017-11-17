@@ -1,4 +1,6 @@
 import React from 'react';
+import { Form, FormControl, Button } from 'react-bootstrap';
+
 /* Update for React 16.0.0: PropTypes is now required as a separate module
 * ...it's no longer available via React.PropTypes.
 */
@@ -46,12 +48,15 @@ export default class IssueAdd extends React.Component {
     /* eslint max-len: "off" */
     return (
       <div>
-        <form name="issueAdd" onSubmit={this.handleSubmit}>
-          <input type="text" name="owner" defaultValue="Kumbhakarna" placeholder="Owner" />
-          <input type="text" name="title" defaultValue="Get rid of flying monkeys" placeholder="Title" />
-          <button type="submit">Add</button>
-          <button onClick={this.handleReset}>Reset</button>
-        </form>
+        <Form inline name="issueAdd" onSubmit={this.handleSubmit}>
+          <FormControl name="owner" defaultValue="Kumbhakarna" placeholder="Owner" />
+          {' '}
+          <FormControl name="title" defaultValue="Get rid of flying monkeys" placeholder="Title" />
+          {' '}
+          <Button type="submit" bsStyle="primary">Add</Button>
+          {' '}
+          <Button onClick={this.handleReset}>Reset</Button>
+        </Form>
       </div>
     );
   }

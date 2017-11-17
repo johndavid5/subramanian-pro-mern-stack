@@ -1,13 +1,15 @@
 import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Router, Route, browserHistory, withRouter, IndexRoute } from 'react-router';
+import { Router, Route, Redirect, browserHistory, withRouter } from 'react-router';
+// import { IndexRoute } from 'react-router';
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Glyphicon } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
-import Dashboard from './Dashboard.jsx';
+// import Dashboard from './Dashboard.jsx';
 import IssueList from './IssueList.jsx';
 import IssueEdit from './IssueEdit.jsx';
+import Utils from './Utils.jsx';
 
 
 const VERSION = '1.2.13';
@@ -37,12 +39,12 @@ const Header = () => (
       <NavItem><Glyphicon glyph="plus" />Create Issue</NavItem>
       <NavDropdown id="user-dropdown" title={<Glyphicon glyph="option-horizontal" />} noCaret>
         <MenuItem>Logout</MenuItem>
-      </NavDropdown> 
+      </NavDropdown>
     </Nav>
   </Navbar>
 );
 
-//{
+// {
 //
 //   ReactRouter will pass via props.children
 //   the child component resolved as a result of
@@ -101,9 +103,32 @@ const App = props => (
     <div className="container-fluid">
       {props.children}
       <hr />
-      <h5><small>
-      Full source code available at this <a href="https://github.com/vasansr/pro-mern-stack">GitHub repository</a>
-      </small></h5>
+      {(function (props) { // Equivalent of Angular ng-if using IIFE()
+          if (Utils.stringToBool(props.location.query.igor)) {
+            return (
+            <div className="footer">
+              <img src="/images/igor.130x130.c.gif" alt="Igor" style={{ width: '100px', height: '100px', float: 'left', paddingRight: '10px' }} />
+              <h5>
+              Subramanian&apos;s Full source code available at this <a href="https://github.com/vasansr/pro-mern-stack" target="_blank" rel="noopener noreferrer">GitHub repository</a>, Master
+              <br />
+              <br />
+              Aynedjian&apos;s Full source code available at this <a href="https://github.com/johndavid5/subramanian-pro-mern-stack" target="_blank" rel="noopener noreferrer">GitHub repository</a>, Master
+              </h5>
+            </div>
+            );
+          }
+          else {
+            return (
+            <h5>
+              <small>
+              Full Subramanian source code available at this <a href="https://github.com/vasansr/pro-mern-stack" target="_blank" rel="noopener noreferrer">GitHub repository</a>
+              <br />
+              Full Aynedjian source code available at this <a href="https://github.com/johndavid5/subramanian-pro-mern-stack" target="_blank" rel="noopener noreferrer">GitHub repository</a>
+              </small>
+            </h5>
+            );
+          }
+      }(props))}
     </div>
   </div>
 );
@@ -112,19 +137,22 @@ App.propTypes = {
   children: React.PropTypes.object.isRequired,
 };
 
+//
+//    {
+//      /*
+//      * child component resolved as a result of route matching
+//      * will be passed to App via props.children
+//      */
+//    }
 const RoutedApp = () => (
   <Router history={browserHistory}>
     {
-      // <Redirect from="/" to="/issues" />
+      // In case you want an "index" page or "dashboard" 
+      // as the default page...
+      // <IndexRoute component={Dashboard} />
     }
+    <Redirect from="/" to="/issues" />
     <Route path="/" component={App}>
-      <IndexRoute component={Dashboard} />
-      {
-       /*
-       * child component resolved as a result of route matching
-       * will be passed to App via props.children
-       */
-      }
       <Route path="/issues" component={withRouter(IssueList)} />
       <Route path="/issues/:id" component={IssueEdit} />
       <Route path="*" component={NoMatch} />
