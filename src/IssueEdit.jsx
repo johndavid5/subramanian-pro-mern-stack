@@ -1,14 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router';
+import { FormGroup, FormControl, ControlLabel, ButtonToolbar, Button, Panel, Form, Col } from 'react-bootstrap';
+
 import NumInput from './NumInput.jsx';
 import DateInput from './DateInput.jsx';
 import Utils from './Utils.jsx';
 
 export default class IssueEdit extends React.Component { // eslint-disable-line
   constructor() {
+
     const sWho = 'IssueEdit::constructor';
     console.log(`${sWho}()...`);
+
     super();
     // Create initial state in constructor with
     // empty string, otherwise React assumes
@@ -175,9 +178,78 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
   }
 
   render() {
+
     const issue = this.state.issue;
 
     const validationMessage = Object.keys(this.state.invalidFields).length === 0 ? null : (<div className="error">Please correct invalid fields before submitting.</div>);
+
+    return (
+      <Panel header="Edit Issue">
+        <Form horizontal onSubmit={this.onSubmit}>
+          <FormGroup>
+            <Col componentClass={ControlLabel} sm={3}>ID</Col>
+            <Col sm={9}>
+              <FormControl.Static>{issue._id}</FormControl.Static>
+            </Col>
+          </FormGroup>
+          <FormGroup>
+            <Col componentClass={ControlLabel} sm={3}>Created</Col>
+            <Col sm={9}>
+              <FormControl.Static>
+              {issue.created ? issue.created.toDateString() : ''}
+              </FormControl.Static>
+            </Col>
+          </FormGroup>
+          <FormGroup>
+            <Col componentClass={ControlLabel} sm={3}>Status</Col>
+            <Col sm={9}>
+              <FormControl componentClass="select" name="status"
+               value={issue.status} onChange={this.onChange}
+              >
+                <option value="New">New</option>
+                <option value="Open">Open</option>
+                <option value="Assigned">Assigned</option>
+                <option value="Fixed">Fixed</option>
+                <option value="Verified">Fixed</option>
+                <option value="Closed">Closed</option>
+              </FormControl>
+            </Col>
+          </FormGroup>
+          <FormGroup>
+            <Col componentClass={ControlLabel} sm={3}>Owner</Col>
+            <Col sm={9}>
+              <FormControl name="owner"
+               value={issue.owner} onChange={this.onChange}
+              </>
+            </Col>
+          </FormGroup>
+          <FormGroup>
+            <Col componentClass={ControlLabel} sm={3}>Effort</Col>
+            <Col sm={9}>
+              <FormControl componentClass={NumInput} name="effort"
+               value={issue.effort} onChange={this.onChange}
+              </>
+            </Col>
+          </FormGroup>
+        </Form>
+        {((props, state) => { // Equivalent of Angular ng-if using IIFE()
+            /* console.log('IssueEdit: this.props=', props); */
+            /* console.log('IssueEdit: this.props.location=', this.props.location); */
+            /* console.log('IssueEdit: this.props.location.query=', this.props.location.query); */
+            /* console.log('IssueEdit: this.props.location.query.debug=', this.props.location.query.debug); */
+            if (Utils.stringToBool(props.location.query.debug)) {
+              return (<div>
+                <pre>this.state={JSON.stringify(state, null, 2)}</pre>
+                <pre>this.props={JSON.stringify(props, null, 2)}</pre>
+              </div>
+			  );
+            }
+
+            return '';
+        })(this.props, this.state)}
+      </Panel>
+    );
+
 
     return (
       <div style={{ paddingBottom: '10px' }}>
