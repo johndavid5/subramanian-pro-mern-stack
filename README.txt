@@ -51,8 +51,9 @@ to ./static/bootstrap, so run "npm run bootstrap-copy" which does
  $ cp -r ./node_modules/bootstrap/dist ./static/bootstrap.  This
 is for use primarily of the CSS, as the JavaScript is included
 in react-boostrap.
+
   On Linux you could do a soft-link instead:
  $ cp -r ./node_modules/bootstrap/dist ./static/bootstrap.  This
-  Later on, if we feel like it, we can use "webpack" to insert bootstrap's
-CSS into the DOM as a <style>...</style> element.
+  Later on, if we feel like showing off, we can use "webpack" to
+insert bootstrap's CSS into the DOM as a <style>...</style> element.
 

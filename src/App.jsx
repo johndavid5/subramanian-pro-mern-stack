@@ -104,7 +104,7 @@ const App = props => (
       {props.children}
       <hr />
       {(function (props) { // Equivalent of Angular ng-if using IIFE()
-          if (Utils.stringToBool(props.location.query.igor)) {
+          if (Utils.stringToBool(props.location.query.igor) || 1 == 1) {
             return (
             <div className="footer">
               <img src="/images/igor.130x130.c.gif" alt="Igor" style={{ width: '100px', height: '100px', float: 'left', paddingRight: '10px' }} />
@@ -112,7 +112,7 @@ const App = props => (
               Subramanian&apos;s Full source code available at this <a href="https://github.com/vasansr/pro-mern-stack" target="_blank" rel="noopener noreferrer">GitHub repository</a>, Master
               <br />
               <br />
-              Aynedjian&apos;s Full source code available at this <a href="https://github.com/johndavid5/subramanian-pro-mern-stack" target="_blank" rel="noopener noreferrer">GitHub repository</a>, Master
+              Igor&apos;s Full source code available at this <a href="https://github.com/johndavid5/subramanian-pro-mern-stack" target="_blank" rel="noopener noreferrer">GitHub repository</a>, Master
               </h5>
             </div>
             );

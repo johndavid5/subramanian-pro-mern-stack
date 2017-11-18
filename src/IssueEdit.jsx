@@ -1,4 +1,5 @@
 import React from 'react';
+import { LinkContainer } from 'react-router-bootstrap';
 import PropTypes from 'prop-types';
 import { FormGroup, FormControl, ControlLabel, ButtonToolbar, Button, Panel, Form, Col } from 'react-bootstrap';
 
@@ -210,7 +211,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
                 <option value="Open">Open</option>
                 <option value="Assigned">Assigned</option>
                 <option value="Fixed">Fixed</option>
-                <option value="Verified">Fixed</option>
+                <option value="Verified">Verified</option>
                 <option value="Closed">Closed</option>
               </FormControl>
             </Col>
@@ -220,7 +221,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
             <Col sm={9}>
               <FormControl name="owner"
                value={issue.owner} onChange={this.onChange}
-              </>
+              />
             </Col>
           </FormGroup>
           <FormGroup>
@@ -228,10 +229,45 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
             <Col sm={9}>
               <FormControl componentClass={NumInput} name="effort"
                value={issue.effort} onChange={this.onChange}
-              </>
+              />
+            </Col>
+          </FormGroup>
+          <FormGroup validationState={this.state.invalidFields.completionDate ? 'error' : null }>
+            <Col componentClass={ControlLabel} sm={3}>
+            Completion Date
+            </Col>
+            <Col sm={9}>
+              <FormControl componentClass={DateInput}
+               name="completionDate"
+               value={issue.completionDate} 
+               onChange={this.onChange}
+               onValidityChange={this.onValidityChange}
+              />
+              <FormControl.Feedback />
+            </Col>
+          </FormGroup>
+          <FormGroup>
+            <Col componentClass={ControlLabel} sm={3}>Title</Col>
+            <Col sm={9}>
+              <FormControl name="title" value={issue.title}
+               onChange={this.onChange}
+              />
+            </Col>
+          </FormGroup>
+          <FormGroup>
+            <Col smOffset={3} sm={6}>
+              <ButtonToolbar>
+                <Button bsStyle="primary" type="submit">
+                Submit
+                </Button>
+                <LinkContainer to="/issues">
+                  <Button bsStyle="link">Back to Issues</Button>
+                </LinkContainer>
+              </ButtonToolbar>
             </Col>
           </FormGroup>
         </Form>
+        {validationMessage}
         {((props, state) => { // Equivalent of Angular ng-if using IIFE()
             /* console.log('IssueEdit: this.props=', props); */
             /* console.log('IssueEdit: this.props.location=', this.props.location); */
@@ -248,57 +284,6 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
             return '';
         })(this.props, this.state)}
       </Panel>
-    );
-
-
-    return (
-      <div style={{ paddingBottom: '10px' }}>
-        <form onSubmit={this.onSubmit}>
-        ID: {issue._id}
-          <br />
-        Created: {issue.created ? issue.created.toDateString() : ''}
-          <br />
-        Status: <select
-          name="status"
-          value={issue.status}
-          onChange={this.onChange}
-        >
-          <option value="New">New</option>
-          <option value="Open">Open</option>
-          <option value="Assigned">Assigned</option>
-          <option value="Fixed">Fixed</option>
-          <option value="Closed">Closed</option>
-                </select>
-          <br />
-        Owner: <input name="owner" value={issue.owner} onChange={this.onChange} />
-          <br />
-        Effort: <NumInput size={5} name="effort" value={issue.effort} onChange={this.onChange} />
-          <br />
-        Completion Date: <DateInput name="completionDate" value={issue.completionDate} onChange={this.onChange} onValidityChange={this.onValidityChange} />
-          <br />
-        Title: <input name="title" size={50} value={issue.title} onChange={this.onChange} />
-          <br />
-          {validationMessage}
-          <button type="submit">Submit</button>
-          <br />
-          <Link to="/issues">Back to issue list</Link>
-        </form>
-        {((props, state) => { // Equivalent of Angular ng-if using IIFE()
-            /* console.log('IssueEdit: this.props=', props); */
-            /* console.log('IssueEdit: this.props.location=', this.props.location); */
-            /* console.log('IssueEdit: this.props.location.query=', this.props.location.query); */
-            /* console.log('IssueEdit: this.props.location.query.debug=', this.props.location.query.debug); */
-            if (Utils.stringToBool(props.location.query.debug)) {
-              return (<div>
-                <pre>this.state={JSON.stringify(state, null, 2)}</pre>
-                <pre>this.props={JSON.stringify(props, null, 2)}</pre>
-              </div>
-			  );
-            }
-
-            return '';
-        })(this.props, this.state)}
-      </div>
     );
   }
 }
