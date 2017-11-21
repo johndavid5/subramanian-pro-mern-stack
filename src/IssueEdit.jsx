@@ -1,7 +1,7 @@
 import React from 'react';
 import { LinkContainer } from 'react-router-bootstrap';
 import PropTypes from 'prop-types';
-import { FormGroup, FormControl, ControlLabel, ButtonToolbar, Button, Panel, Form, Col } from 'react-bootstrap';
+import { FormGroup, FormControl, ControlLabel, ButtonToolbar, Button, Panel, Form, Col, Alert } from 'react-bootstrap';
 
 import NumInput from './NumInput.jsx';
 import DateInput from './DateInput.jsx';
@@ -31,7 +31,11 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
         created: null,
       },
       invalidFields: {},
+      showingValidation: false,
     };
+
+    this.dismissValidation = this.dismissValidation.bind(this);
+    this.showValidation = this.showValidation.bind(this);
 
     this.onChange = this.onChange.bind(this);
     this.onValidityChange = this.onValidityChange.bind(this);
@@ -97,8 +101,18 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
     );
   }/* onValidityChange() */
 
+  showValidation(){
+    this.setState({showingValidation: true});
+  }
+
+  dismissValidation(){
+    this.setState({showingValidation: false});
+  }
+
   onSubmit(event) {
+
     event.preventDefault();
+    this.showValidation();
 
     if (Object.keys(this.state.invalidFields).length !== 0) {
       return;
@@ -182,7 +196,18 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
 
     const issue = this.state.issue;
 
-    const validationMessage = Object.keys(this.state.invalidFields).length === 0 ? null : (<div className="error">Please correct invalid fields before submitting.</div>);
+    let validationMessage = null;
+
+    if( Object.keys(this.state.invalidFields).length !== 0
+           &&
+        this.state.showingValidation)
+    {
+      validationMessage = (
+        <Alert bsStyle="danger" onDismiss={this.dismissValidation}>
+        Please correct invalid fields before submitting.
+        </Alert>
+      );
+    }
 
     return (
       <Panel header="Edit Issue">
@@ -266,8 +291,10 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
               </ButtonToolbar>
             </Col>
           </FormGroup>
+          <FormGroup>
+            <Col smOffset={3} sm={9}>{validationMessage}</Col>
+          </FormGroup>
         </Form>
-        {validationMessage}
         {((props, state) => { // Equivalent of Angular ng-if using IIFE()
             /* console.log('IssueEdit: this.props=', props); */
             /* console.log('IssueEdit: this.props.location=', this.props.location); */
