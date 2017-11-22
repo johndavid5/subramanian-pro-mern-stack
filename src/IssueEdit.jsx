@@ -1,10 +1,12 @@
 import React from 'react';
-import { LinkContainer } from 'react-router-bootstrap';
 import PropTypes from 'prop-types';
+
+import { LinkContainer } from 'react-router-bootstrap';
 import { FormGroup, FormControl, ControlLabel, ButtonToolbar, Button, Panel, Form, Col, Alert } from 'react-bootstrap';
 
 import NumInput from './NumInput.jsx';
 import DateInput from './DateInput.jsx';
+import Toast from './Toast.jsx';
 import Utils from './Utils.jsx';
 
 export default class IssueEdit extends React.Component { // eslint-disable-line
@@ -32,10 +34,17 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
       },
       invalidFields: {},
       showingValidation: false,
+      toastVisible: false,
+      toastMessage: '',
+      toastType: 'success',
     };
 
     this.dismissValidation = this.dismissValidation.bind(this);
     this.showValidation = this.showValidation.bind(this);
+
+    this.showSuccess = this.showSuccess.bind(this);
+    this.showError = this.showError.bind(this);
+    this.dismissToast = this.dismissToast.bind(this);
 
     this.onChange = this.onChange.bind(this);
     this.onValidityChange = this.onValidityChange.bind(this);
@@ -108,6 +117,19 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
   dismissValidation(){
     this.setState({showingValidation: false});
   }
+			
+  showSuccess(message){
+    this.setState({ toastVisible: true, toastMessage: message, toastType: 'success'});
+  }
+
+  showError(message){
+    this.setState({ toastVisible: true, toastMessage: message, toastType: 'danger'});
+  }
+
+  dismissToast(message){
+    this.setState({ toastVisible: false});
+  }
+
 
   onSubmit(event) {
 
@@ -133,17 +155,17 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
             }
 
             this.setState({ issue: updatedIssue });
-
-            alert('Updated issue successfully.');
+            //alert('Updated issue successfully.');
+			this.showSuccess('Updated issue successfully.');
           });
       } else {
         response.json()
           .then((error) => {
-            alert(`Failed to update issue: ${error.message}`);
+            this.showSuccess(`Failed to update issue: ${error.message}`);
           });
       }
     }).catch((err) => {
-      alert(`Error in sending data to server: ${err.message}`);
+      this.showSuccess(`Error in sending data to server: ${err.message}`);
     });
   }/* onSubmit() */
 
@@ -156,14 +178,15 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
     fetch(`/api/issues/${this.props.params.id}`)
       .then((response) => {
         if (response.ok) {
+
           response.json()
-            .then((issue) => {
+          .then((issue) => {
               console.log(`${sWho}(): issue as returned by database = `, issue);
 
               // issue.created = new Date(issue.created).toDateString();
               issue.created = new Date(issue.created);
 
-		  // store "completionDate" as Date rather than string...
+              // store "completionDate" as Date rather than string...
               // issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate).toDateString():'';
               issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate) : null;
 
@@ -182,13 +205,13 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
             });
         } else {
           response.json()
-            .then((error) => {
-              alert(`Failed to fetch issue: ${error.message}`);
-            });
+          .then((error) => {
+              this.showError(`Failed to fetch issue: ${error.message}`);
+          });
         }
       })
       .catch((err) => {
-        alert(`Error in fetching data from server: ${err.message}`);
+        this.showError(`Error in fetching data from server: ${err.message}`);
       });
   }
 
@@ -295,6 +318,11 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
             <Col smOffset={3} sm={9}>{validationMessage}</Col>
           </FormGroup>
         </Form>
+        <Toast showing={this.state.toastVisible}
+         message={this.state.toastMessage}
+         onDismiss={this.dismissToast} 
+         bsStyle={this.state.toastType}
+        />
         {((props, state) => { // Equivalent of Angular ng-if using IIFE()
             /* console.log('IssueEdit: this.props=', props); */
             /* console.log('IssueEdit: this.props.location=', this.props.location); */

@@ -9,6 +9,7 @@ import { Button, Glyphicon, Table, Panel } from 'react-bootstrap';
 
 import IssueAdd from './IssueAdd.jsx';
 import IssueFilter from './IssueFilter.jsx';
+import Toast from './Toast.jsx';
 import Utils from './Utils.jsx';
 
 const IssueRow = (props) => {
@@ -82,11 +83,17 @@ IssueTable.propTypes = {
 };
 
 export default class IssueList extends React.Component {
+
   constructor() {
 
     super();
 
-    this.state = { issues: [] };
+    this.state = {
+      issues: [],
+      toastVisible: false,
+      toastMessage: '',
+      toastType: 'success',
+	};
 
     // Bind once...re-use multiple times...
     // actually, you must bind it here in
@@ -97,6 +104,9 @@ export default class IssueList extends React.Component {
     this.setFilter = this.setFilter.bind(this);
 
     this.deleteIssue = this.deleteIssue.bind(this);
+
+    this.showError = this.showError.bind(this);
+    this.dismissToast = this.dismissToast.bind(this);
   }
 
 
@@ -138,6 +148,14 @@ export default class IssueList extends React.Component {
     this.props.router.push({ pathname: this.props.location.pathname, query });
   }
 
+  showError(message){
+    this.setState({toastVisible: true, toastMessage: message, toastType: 'danger'});
+  }
+
+  dismissToast(){
+    this.setState({toastVisible: false});
+  }
+
   loadData() {
     const sWho = 'loadData';
 
@@ -167,12 +185,12 @@ export default class IssueList extends React.Component {
         } else {
           response.json()
             .then((error) => {
-              alert(`Failed to fetch issues:${error.message}`);
+              this.showError(`Failed to fetch issues:${error.message}`);
             });
         }
       })
       .catch((err) => {
-        alert('HTTP Error in fetching data from server:', err);
+        this.showError('HTTP Error in fetching data from server:', err);
       });
   }/* loadData() */
 
@@ -222,12 +240,12 @@ export default class IssueList extends React.Component {
         } else {
           response.json()
             .then((error) => {
-              alert(`Failed to add issue: ${error.message}`);
+              this.showError(`Failed to add issue: ${error.message}`);
             });
         }
       })
       .catch((err) => {
-        alert(`Error in sending data to server: ${
+        this.showError(`Error in sending data to server: ${
           err.message}`);
       });
   }/* createIssue() */
@@ -254,6 +272,12 @@ export default class IssueList extends React.Component {
         </Panel>
         <IssueTable issues={this.state.issues} deleteIssue={this.deleteIssue} />
         <IssueAdd createIssue={this.createIssue} />
+        <Toast
+         showing={this.state.toastVisible}
+         message={this.state.toastMessage}
+         onDismiss={this.dismissToast} 
+         bsStyle={this.state.toastType}
+        />
         {(function (props) { // Equivalent of Angular ng-if using IIFE()
           if (Utils.stringToBool(props.location.query.debug)) {
             return (<pre>this.props={JSON.stringify(props, null, 2)}</pre>);

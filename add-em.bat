@@ -42,6 +42,7 @@ call git add ./src/App.jsx
 call git add ./src/Dashboard.jsx
 call git add ./src/DateInput.jsx
 call git add ./src/IssueAdd.jsx
+call git add ./src/IssueAddNavItem.jsx
 call git add ./src/IssueEdit.jsx
 call git add ./src/IssueFilter.jsx
 call git add ./src/IssueList.jsx

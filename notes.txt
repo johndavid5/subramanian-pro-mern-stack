@@ -14,3 +14,13 @@
   Scheduled for release in Summer of 2016.
 
   See also: https://benmccormick.org/2015/09/14/es5-es6-es2016-es-next-whats-going-on-with-javascript-versioning/
+
+/* Update required for React 16.0.0: PropTypes is required as
+* a separate module...it will no longer available via React.PropTypes.
+* IssueList.jsx, IssueEdit.jsx...
+*/
+11/21/2017: Toast.jsx:
+  Better to use PropTypes rather than React.PropTypes
+  import PropTypes from 'prop-types';
+  BEFORE: Toast.propTypes = { showing: React.PropTypes.bool.isRequired, ... }
+  AFTER: Toast.propTypes = { after: PropTypes.bool.isRequired, ... }

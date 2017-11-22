@@ -5,7 +5,7 @@
   "rules": {
 	// https://github.com/yannickcr/eslint-plugin-react/blob/master/docs/rules/forbid-prop-types.md
     "react/forbid-prop-types": ["off", { "forbid": ['any', 'array', 'object'] }],
-	"no-alert":["off"],
+	//"no-alert":["off"],
 	"max-len":["off"]
   }
 }
