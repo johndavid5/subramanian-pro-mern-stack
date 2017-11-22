@@ -9,6 +9,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 // import Dashboard from './Dashboard.jsx';
 import IssueList from './IssueList.jsx';
 import IssueEdit from './IssueEdit.jsx';
+import IssueAddNavItem from './IssueAddNavItem.jsx';
 import Utils from './Utils.jsx';
 
 
@@ -36,7 +37,7 @@ const Header = () => (
       </LinkContainer>
     </Nav>
     <Nav pullRight>
-      <NavItem><Glyphicon glyph="plus" />Create Issue</NavItem>
+      <IssueAddNavItem />
       <NavDropdown id="user-dropdown" title={<Glyphicon glyph="option-horizontal" />} noCaret>
         <MenuItem>Logout</MenuItem>
       </NavDropdown>
@@ -137,6 +138,9 @@ App.propTypes = {
   children: React.PropTypes.object.isRequired,
 };
 
+// Inject the router property into the components which need it, using
+// ReactRouter's withRouter method.  This method wraps a given component
+// and makes the router property available.
 //
 //    {
 //      /*

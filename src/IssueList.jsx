@@ -7,7 +7,6 @@ import 'whatwg-fetch'; // polyfill for Fetch API for dinosaur browsers...
 import { Link } from 'react-router';
 import { Button, Glyphicon, Table, Panel } from 'react-bootstrap';
 
-import IssueAdd from './IssueAdd.jsx';
 import IssueFilter from './IssueFilter.jsx';
 import Toast from './Toast.jsx';
 import Utils from './Utils.jsx';
@@ -99,8 +98,6 @@ export default class IssueList extends React.Component {
     // actually, you must bind it here in
     // the constructor since it's now being
     // called from another component...
-    this.createIssue = this.createIssue.bind(this);
-
     this.setFilter = this.setFilter.bind(this);
 
     this.deleteIssue = this.deleteIssue.bind(this);
@@ -194,61 +191,6 @@ export default class IssueList extends React.Component {
       });
   }/* loadData() */
 
-  createIssue(newIssue) {
-    // Use Array.slice() to create a shallow copy, meaning
-    // it copies references of object elements...and makes
-    // copies of primitive elements...
-    //
-    // const newIssues = this.state.issues.slice();
-    // newIssue.id = this.state.issues.length + 1;
-    // newIssues.push(newIssue);
-    //
-    // this.setState({issues: newIssues });
-
-    fetch('/api/issues', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newIssue),
-    })
-      .then((response) => {
-        if (response.ok) {
-          response.json()
-            .then((updatedIssue) => {
-              // Convert ISO 8601 date string to a Date object...
-              updatedIssue.created = new Date(updatedIssue.created);
-              if (updatedIssue.completionDate) {
-                updatedIssue.completionDate = new Date(updatedIssue.completionDate);
-              }
-
-              // The concat() method is used to merge two or more
-              // arrays. This method does not change the existing arrays,
-              // but instead returns a new array.
-              const newIssues = this.state.issues.concat(updatedIssue);
-              // Remember the state is immutable, so you
-              // cannot make modifications to it...
-              // So we use the concat() function of Array
-              // which creates a copy of the original array,
-              // and therefore is safe.
-
-              // When React sees the state being modified
-              // via setState(), it triggers a rerendering
-              // process for the component, and _all_descendent_
-              // components where properties get affected because
-              // of the state change.
-              this.setState({ issues: newIssues });
-            });
-        } else {
-          response.json()
-            .then((error) => {
-              this.showError(`Failed to add issue: ${error.message}`);
-            });
-        }
-      })
-      .catch((err) => {
-        this.showError(`Error in sending data to server: ${
-          err.message}`);
-      });
-  }/* createIssue() */
 
   deleteIssue(id){
     fetch(`/api/issues/${id}`, { method: 'DELETE'}
@@ -271,7 +213,6 @@ export default class IssueList extends React.Component {
           <IssueFilter setFilter={this.setFilter} initFilter={this.props.location.query} />
         </Panel>
         <IssueTable issues={this.state.issues} deleteIssue={this.deleteIssue} />
-        <IssueAdd createIssue={this.createIssue} />
         <Toast
          showing={this.state.toastVisible}
          message={this.state.toastMessage}

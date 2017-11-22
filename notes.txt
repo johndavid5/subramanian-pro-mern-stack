@@ -24,3 +24,18 @@
   import PropTypes from 'prop-types';
   BEFORE: Toast.propTypes = { showing: React.PropTypes.bool.isRequired, ... }
   AFTER: Toast.propTypes = { after: PropTypes.bool.isRequired, ... }
+
+11/22/2017: src/IssueAddNavItem.jsx
+// Return component wrapped via withRouter rather than bare component.
+
+// Compare to withRouter use in App.jsx:
+//      <Route path="/issues" component={withRouter(IssueList)} />
+//
+// https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/withRouter.md
+//
+// You can get access to the history object's properties and the closest <Route>'s
+// match via the withRouter higher-order component. withRouter will pass updated match,
+// location, and history props to the wrapped component whenever it renders.
+export default withRouter(IssueAddNavItem);
+
+You can get access to the history object's properties and the closest <Route>'s match via the withRouter higher-order component. withRouter will pass updated match, location, and history props to the wrapped component whenever it renders.

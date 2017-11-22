@@ -1,12 +1,13 @@
 /* A Model dialog for adding items... */
 import React from 'react';
+import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import { NavItem, Glyphicon, Modal, Form, FormGroup, FormControl, ControlLabel, Button, ButtonToolbar } from 'react-bootstrap';
 
 import Toast from './Toast.jsx';
 
 class IssueAddNavItem extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       showing: false,
@@ -15,30 +16,29 @@ class IssueAddNavItem extends React.Component {
       toastType: 'success',
     };
     this.showModal = this.showModal.bind(this);
-    this.hideModel = this.hideModal.bind(this);
+    this.hideModal = this.hideModal.bind(this);
     this.submit = this.submit.bind(this);
     this.showError = this.showError.bind(this);
     this.dismissToast = this.dismissToast.bind(this);
   }
 
-  showModal(){
+  showModal() {
     this.setState({ showing: true });
   }
 
-  hideModal(){
+  hideModal() {
     this.setState({ showing: false });
   }
 
-  showError(message){
-    this.setState({ toastVisible: true, toastMessage: message, toastType: 'danger'});
+  showError(message) {
+    this.setState({ toastVisible: true, toastMessage: message, toastType: 'danger' });
   }
 
-  dismissToast(){
+  dismissToast() {
     this.setState({ toastVisible: false });
   }
 
-  submit(e){
-
+  submit(e) {
     e.preventDefault();
 
     this.hideModal();
@@ -49,25 +49,25 @@ class IssueAddNavItem extends React.Component {
       owner: leForm.owner.value,
       title: leForm.title.value,
       status: 'New',
-	  created: new Date(),
+      created: new Date(),
     };
 
     fetch('/api/issues', {
       method: 'POST',
-	  headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newIssue),
-    }).then(response => {
-      if( response.ok ){
+    }).then((response) => {
+      if (response.ok) {
         response.json()
-        .then(updatedIssue => {
-          // Go to the new issue...
-          this.props.router.push(`/issues/${updatedIssue._id}`);
-        });
+          .then((updatedIssue) => {
+            // Go to the new issue...
+            this.props.router.push(`/issues/${updatedIssue._id}`);
+          });
       } else {
         response.json()
-        .then( error => {
-          this.showError(`Failed to add issue: ${error.message}`);
-		}); 
+          .then( (error) => {
+            this.showError(`Failed to add issue: ${error.message}`);
+		  }); 
       }
     })
     .catch(err => {
@@ -75,9 +75,9 @@ class IssueAddNavItem extends React.Component {
     });
   }/* submit() */
 
-  render(){
+  render() {
     return (
-      <NavItem onclick={this.showModal}><Glyphicon glyph="plus" />
+      <NavItem onClick={this.showModal}><Glyphicon glyph="plus" />
       Create Issue
         <Modal keyboard show={this.state.showing} onHide={this.hideModal}>
           <Modal.Header closeButton>
@@ -112,4 +112,17 @@ IssueAddNavItem.propTypes = {
   router: PropTypes.object,
 }
 
+// Inject the router property into the components which need it, using
+// ReactRouter's withRouter method.  This method wraps a given component
+// and makes the router property available.
+//
+// Return component wrapped via withRouter rather than bare component.
+// This way the client does not need to know that we are 
+// Compare to withRouter use in App.jsx:
+//      <Route path="/issues" component={withRouter(IssueList)} />
+//
+// https://github.com/ReactTraining/react-router/blob/master/packages/react-router/docs/api/withRouter.md
+// You can get access to the history object's properties and the closest <Route>'s
+// match via the withRouter higher-order component. withRouter will pass updated match,
+// location, and history props to the wrapped component whenever it renders.
 export default withRouter(IssueAddNavItem);
