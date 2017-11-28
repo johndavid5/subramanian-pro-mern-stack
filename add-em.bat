@@ -1,14 +1,14 @@
 call git add .gitignore
 
-call git add nwatch.bat
 call git add uwatch.bat
-call git add nstart.bat
+call git add ustart.bat
 call git add status.bat
 call git add add-em.bat
 call git add v.bat
 call git add l.bat
 call git add lf.bat
 call git add README.txt
+call git add todo.txt
 call git add .eslintrc
 
 call git add curl/curl-create-issue.bat
@@ -17,6 +17,7 @@ call git add curl/curl-get-issues.bat
 call git add curl/curl-get-issue-by-id.bat
 call git add curl/curl-get-issues-filtered.bat
 call git add curl/curl-put-issue.bat
+call git add curl/curl-get-stats.bat
 
 call git add notes.txt
 
@@ -29,6 +30,8 @@ call git add webpack.config.js
 
 call git add ./scripts/init.mongo.js
 call git add ./scripts/init.mongo.bat
+call git add ./scripts/generate_data.mongo.bat*
+call git add ./scripts/generate_data.mongo.js
 
 call git add ./server/server.js
 call git add ./server/issue.js

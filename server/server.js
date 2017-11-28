@@ -52,6 +52,7 @@ app.set('json spaces', 2);
 // });
 
 app.get('/api/issues', (req, res) => {
+
   const sWho = 'app.get("/api/issues")';
 
   console.log(`${sWho}: req.query = `, req.query);
@@ -80,19 +81,68 @@ app.get('/api/issues', (req, res) => {
     }
   }
 
-  console.log(`${sWho}: db.collection("issues").find( filter = `, filter, ')...');
+  console.log(`${sWho}: filter = `, filter, '...');
 
-  db.collection('issues').find(filter).toArray()
-    .then((issues) => {
-      const metadata = { total_count: issues.length };
+  if( req.query._summary === undefined ){
+    // Plain old GET of issues...
 
-      console.log(`${sWho}: sending json, metadata = `, metadata);
-      res.json({ _metadata: metadata, records: issues });
+    // limit defaults to 20... 
+    let limit = req.query.limit ? parseInt(req.query._limit, 10) : 20;
+
+    // max limit limited to 50...
+    if( limit > 50 ){
+      limit = 50;
+    }
+
+    console.log(`${sWho}: db.collection("issues").find( filter = `, filter, `).limit( ${limit} )...`);
+
+    db.collection('issues').find(filter).limit(limit).toArray()
+      .then((issues) => {
+        const metadata = { total_count: issues.length };
+
+        console.log(`${sWho}: sending JSON to client, metadata = `, metadata);
+        res.json({ _metadata: metadata, records: issues });
+      })
+      .catch((error) => {
+        var message = { message: `Internal Server Error: ${error}` };
+        console.log(`${sWho}: Caught an Exception...Sending Code 500 and JSON `, message, ` to client...`);
+        res.status(500).json(message);
+      });
+  } else {
+    // Not a plain old GET of issues...aggregated report of issues...
+		  //
+
+    let aggregatee = [
+      { $match: filter },
+      { $group: { _id: { owner: '$owner', status: '$status'},
+                  count: { $sum: 1 },
+	            }
+      },
+    ];
+
+    console.log(`${sWho}: db.collection("issues").aggregate(`, aggregatee, `)...`);
+
+    db.collection('issues').aggregate(
+      aggregatee
+    ).toArray()
+    .then( (results) => {
+      const stats = {};
+      results.forEach( result => {
+        if( !stats[result._id.owner]){
+          stats[result._id.owner] = {};
+        }
+        stats[result._id.owner][result._id.status] = result.count;
+      });
+      console.log(`${sWho}: Sending to client: stats = `, stats, `...` );
+      res.json(stats);
     })
-    .catch((error) => {
-      console.log(`${sWho}: Caught an error: ${error}...Sending Code 500 to client...`);
-      res.status(500).json({ message: `Internal Server Error: ${error}` });
-    });
+    .catch((error)=> {
+        var message = { message: `Internal Server Error: ${error}` };
+        console.log(`${sWho}: Caught an Exception...Sending Code 500 and JSON `, message, ` to client...`);
+        res.status(500).json(message);
+    })
+  }
+
 });
 
 app.get('/api/issues/:id', (req, res) => {

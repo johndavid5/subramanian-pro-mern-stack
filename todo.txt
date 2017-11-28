@@ -1,0 +1,6 @@
+1. Extra Credit: Implement your "Are you sure you wish to delete this..."
+as a react-boostrap Modal rather than a javascript confirm()...
+
+Shall we implement it ourselves, or use...
+   https://www.npmjs.com/package/react-confirm-bootstrap
+...?
