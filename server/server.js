@@ -1,7 +1,8 @@
 import 'babel-polyfill';
 import SourceMapSupport from 'source-map-support';
 
-import path from 'path';
+//import path from 'path';
+import renderedPageRouter from './renderedPageRouter.jsx';
 import express from 'express';
 import bodyParser from 'body-parser';
 import favicon from 'serve-favicon';
@@ -337,9 +338,14 @@ app.delete('/api/issues/:id', (req, res) => {
 // routing, if we don't match with any of the
 // previous routes, always return the same
 // page for an SPA: index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve('static/index.html'));
-});
+// app.get('*', (req, res) => {
+// res.sendFile(path.resolve('static/index.html'));
+//});
+console.log("I'll be back, Bennett!");
+console.log("Let off some steam, Bennett!");
+console.log("No chance...!");
+
+app.use('/', renderedPageRouter);
 
 MongoClient.connect(Config.DB_URL)
   .then((connection) => {

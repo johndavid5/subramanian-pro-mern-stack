@@ -28,6 +28,8 @@ call git add config.js
 call git add logger.js
 call git add webpack.config.js
 
+call git add ./client/Client.jsx
+
 call git add ./scripts/init.mongo.js
 call git add ./scripts/init.mongo.bat
 call git add ./scripts/generate_data.mongo.bat*
@@ -35,20 +37,25 @@ call git add ./scripts/generate_data.mongo.js
 
 call git add ./server/server.js
 call git add ./server/issue.js
+call git add ./server/renderedPageRouter.jsx
 call git add ./server/start_hook.js
+call git add ./server/template.js
 call git add ./server/utils.js
 call git add ./server/.eslintrc
+
 
 call git add ./static/index.html
 
 call git add ./src/App.jsx
 call git add ./src/Dashboard.jsx
 call git add ./src/DateInput.jsx
+call git add ./src/HelloWorld.jsx
 call git add ./src/IssueAdd.jsx
 call git add ./src/IssueAddNavItem.jsx
 call git add ./src/IssueEdit.jsx
 call git add ./src/IssueFilter.jsx
 call git add ./src/IssueList.jsx
+call git add ./src/IssueReport.jsx
 call git add ./src/NumInput.jsx
 call git add ./src/Toast.jsx
 call git add ./src/Utils.jsx

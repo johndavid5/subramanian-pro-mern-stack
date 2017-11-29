@@ -8,6 +8,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 // import Dashboard from './Dashboard.jsx';
 import IssueList from './IssueList.jsx';
+import IssueReport from './IssueReport.jsx';
 import IssueEdit from './IssueEdit.jsx';
 import IssueAddNavItem from './IssueAddNavItem.jsx';
 import Utils from './Utils.jsx';
@@ -159,6 +160,7 @@ const RoutedApp = () => (
     <Route path="/" component={App}>
       <Route path="/issues" component={withRouter(IssueList)} />
       <Route path="/issues/:id" component={IssueEdit} />
+      <Route path="/reports" component={withRouter(IssueReport)} />
       <Route path="*" component={NoMatch} />
     </Route>
   </Router>

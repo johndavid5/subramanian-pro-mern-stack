@@ -3,7 +3,8 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: {
-    app: './src/App.jsx',
+    //app: './src/App.jsx',
+    app: './client/Client.jsx',
     vendor: ['react', 'react-dom', 'whatwg-fetch', 'babel-polyfill', 'react-router', 'prop-types', 'react-router-dom', 'react-router-bootstrap'],
   },
   output: {
@@ -33,7 +34,8 @@ module.exports = {
     port: 8000,
     contentBase: 'static',
     proxy: {
-      '/api/*': {
+      //'/api/*': {
+      '**': {
         target: 'http://localhost:3000',
       },
       // For browser history rather than hash-based routing...
