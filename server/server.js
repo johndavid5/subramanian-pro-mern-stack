@@ -1,21 +1,23 @@
-import 'babel-polyfill';
-import SourceMapSupport from 'source-map-support';
+//import 'babel-polyfill';
+//import SourceMapSupport from 'source-map-support';
+//SourceMapSupport.install();
 
 //import path from 'path';
 import renderedPageRouter from './renderedPageRouter.jsx';
 import express from 'express';
 import bodyParser from 'body-parser';
 import favicon from 'serve-favicon';
-import { MongoClient, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 
 // const Config = require('../config.js');
-// const Issue = require('./issue');
-import Config from '../config';
+// import Config from '../config';
+
 import logger from '../logger'; // gets log4j...
+
+// const Issue = require('./issue');
 import Issue from './issue';
 import Utils from './utils';
 
-SourceMapSupport.install();
 
 // throw new Error('Test!');
 
@@ -348,12 +350,18 @@ app.delete('/api/issues/:id', (req, res) => {
 
 app.use('/', renderedPageRouter);
 
-MongoClient.connect(Config.DB_URL)
-  .then((connection) => {
-    db = connection;
-    app.listen(Config.PORT, () => {
-      logger.info(`App started on port ${Config.PORT}`);
-    });
-  }).catch((error) => {
-    logger.error('ERROR:', error);
-  });
+//MongoClient.connect(Config.DB_URL)
+//  .then((connection) => {
+//    db = connection;
+//    app.listen(Config.PORT, () => {
+//      logger.info(`App started on port ${Config.PORT}`);
+//    });
+//  }).catch((error) => {
+//    logger.error('ERROR:', error);
+//  });
+
+function setDb(newDb){
+  db = newDb;
+}
+
+export { app, setDb };

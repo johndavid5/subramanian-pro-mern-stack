@@ -36,7 +36,8 @@ export default class HelloWorld extends React.Component {
   render(){
    return (
    <div>
-   <h1 style={{color: 'green'}}>Hello, {this.state.addressee}!</h1>
+   <h2 style={{fontFamily: 'comic sans ms', color: 'purple'}}>I'll be back, Bennett!</h2>
+   <h1 style={{color: 'green'}}>YOUNG LEE: Goodnight, {this.state.addressee}!</h1>
    <h2 style={{fontFamily: 'comic sans ms', color: 'purple'}}>Let off some steam, Bennett!</h2>
    </div>
    );

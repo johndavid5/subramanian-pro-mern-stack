@@ -1,8 +1,10 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   target: 'node',
-  entry: './server/server.js',
+  //entry: './server/server.js',
+  entry: ['./server/index.js', './node_modules/webpack/hot/poll?1000'],
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'server.bundle.js',
@@ -39,5 +41,8 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin(),
+  ],
   devtool: 'source-map',
 };

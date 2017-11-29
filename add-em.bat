@@ -1,6 +1,7 @@
 call git add .gitignore
 
 call git add uwatch.bat
+call git add uwatch-server.bat
 call git add ustart.bat
 call git add status.bat
 call git add add-em.bat
@@ -36,9 +37,10 @@ call git add ./scripts/init.mongo.bat
 call git add ./scripts/generate_data.mongo.bat*
 call git add ./scripts/generate_data.mongo.js
 
-call git add ./server/server.js
+call git add ./server/index.js
 call git add ./server/issue.js
 call git add ./server/renderedPageRouter.jsx
+call git add ./server/server.js
 call git add ./server/start_hook.js
 call git add ./server/template.js
 call git add ./server/utils.js
