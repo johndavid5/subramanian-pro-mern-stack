@@ -27,6 +27,7 @@ call git add package.json.txt
 call git add config.js
 call git add logger.js
 call git add webpack.config.js
+call git add webpack.server-config.js
 
 call git add ./client/Client.jsx
 

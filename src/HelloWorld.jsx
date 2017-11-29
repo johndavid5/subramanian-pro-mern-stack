@@ -26,8 +26,10 @@ export default class HelloWorld extends React.Component {
 
     // Simulate an AJAX call...
     setTimeout(()=>{
+      console.log("I'll be back, Bennett!");
       console.log("HelloWorld.jsx: this.setState(...)", 'Universe');
       this.setState({addressee: 'Universe'});
+      console.log("Let off some steam, Bennett!");
     }, 5000 );
   }
 
