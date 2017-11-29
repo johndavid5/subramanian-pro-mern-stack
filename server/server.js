@@ -341,9 +341,10 @@ app.delete('/api/issues/:id', (req, res) => {
 // app.get('*', (req, res) => {
 // res.sendFile(path.resolve('static/index.html'));
 //});
-console.log("I'll be back, Bennett!");
-console.log("Let off some steam, Bennett!");
-console.log("No chance...!");
+
+//console.log("I'll be back, Bennett!");
+//console.log("Let off some steam, Bennett!");
+//console.log("No chance...!");
 
 app.use('/', renderedPageRouter);
 
