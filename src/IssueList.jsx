@@ -3,7 +3,10 @@ import React from 'react';
 * a separate module...it will no longer available via React.PropTypes.
 */
 import PropTypes from 'prop-types';
-import 'whatwg-fetch'; // polyfill for Fetch API for dinosaur browsers...
+
+//import 'whatwg-fetch'; // polyfill for Fetch API for dinosaur browsers...
+import 'isomorphic-fetch'; // polyfill for Fetch API for dinosaur browsers...
+
 import { Link } from 'react-router';
 import { Button, Glyphicon, Table, Panel } from 'react-bootstrap';
 
@@ -83,12 +86,22 @@ IssueTable.propTypes = {
 
 export default class IssueList extends React.Component {
 
-  constructor() {
+  constructor(props,context) {
 
-    super();
+    super(props,context);
+
+    const issues = context.initialState.data.records;
+
+    issues.forEach( issue => {
+      issue.created = new Date(issue.created);
+      if(issue.completionDate){
+        issue.completionDate = new Date(issue.completionDate);
+      }
+    });
 
     this.state = {
-      issues: [],
+      //issues: [],
+      issues, // shorthand for issues: issues
       toastVisible: false,
       toastMessage: '',
       toastType: 'success',
@@ -230,8 +243,12 @@ export default class IssueList extends React.Component {
   }
 }
 
+IssueList.contextTypes = { 
+  initialState: PropTypes.object,
+}
+
 IssueList.propTypes = {
-  location: React.PropTypes.object.isRequired,
-  router: React.PropTypes.object,
+  location: PropTypes.object.isRequired,
+  router: PropTypes.object,
 };
 

@@ -5,7 +5,7 @@ module.exports = {
   entry: {
     //app: './src/App.jsx',
     app: './client/Client.jsx',
-    vendor: ['react', 'react-dom', 'whatwg-fetch', 'babel-polyfill', 'react-router', 'prop-types', 'react-router-dom', 'react-router-bootstrap'],
+    vendor: ['react', 'react-dom', 'isomorphic-fetch', 'babel-polyfill', 'react-router', 'prop-types', 'react-router-dom', 'react-router-bootstrap'],
   },
   output: {
     path: `${__dirname}/static`,

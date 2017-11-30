@@ -10,12 +10,17 @@ import Toast from './Toast.jsx';
 import Utils from './Utils.jsx';
 
 export default class IssueEdit extends React.Component { // eslint-disable-line
-  constructor() {
+  constructor(props, context) {
 
     const sWho = 'IssueEdit::constructor';
     console.log(`${sWho}()...`);
 
-    super();
+    super(props, context);
+
+    const issue = context.initialState.data;
+    issue.created = new Date(issue.created);
+    issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate): null;
+
     // Create initial state in constructor with
     // empty string, otherwise React assumes
     // the input fields were uncontrolled components.
@@ -23,15 +28,8 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
     // call, React assumes we've converted an uncontrolled
     // component to a controlled one, and issues a warning.
     this.state = {
-      issue: {
-        _id: '',
-        title: '',
-        status: '',
-        owner: '',
-        effort: null,
-        completionDate: null,
-        created: null,
-      },
+      //issue: { _id: '', title: '', status: '', owner: '', effort: null, completionDate: null, created: null, },
+      issue, // shorthand for issue: issue
       invalidFields: {},
       showingValidation: false,
       toastVisible: false,
@@ -341,6 +339,10 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
       </Panel>
     );
   }
+}
+
+IssueEdit.contextTypes = {
+  initialState: PropTypes.object,
 }
 
 IssueEdit.propTypes = {
