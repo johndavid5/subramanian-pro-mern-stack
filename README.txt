@@ -30,7 +30,9 @@ For webpack-dev-server with compiling and pushing of new changes:
 -----------------------------------------------------------------
 1. Run npm run watch in one window. 
 
-2. Run npm run start-hook in another window.
+2. Run npm run watch-server
+
+3. Run npm run start
 
 3. Go to http://localhost:8000
 
