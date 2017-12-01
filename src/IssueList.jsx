@@ -86,11 +86,39 @@ IssueTable.propTypes = {
 
 export default class IssueList extends React.Component {
 
+  static dataFetcher({urlBase, location}){
+
+    const sWho = "IssueList::dataFetcher";
+
+    const url = `${urlBase||''}/api/issues${location.search}`;
+
+    console.log(`${sWho}(): fetching ${url}...`); 
+
+    return fetch(url)
+    .then(response => { 
+
+      if(!response.ok){
+        return response.json()
+        .then( (error) => { 
+          console.log(`${sWho}(): response.ok is falsey, Moe, returnin' Promise.reject...`);
+		  return Promise.reject(error) }
+		);
+      }
+
+      return response.json()
+      .then( ( data ) => {
+        console.log(`${sWho}(): response.ok is truey, Moe, returnin {IssueList: data = `, data, `}...`);
+        return {IssueList: data};
+      });
+    
+    });
+  }
+
   constructor(props,context) {
 
     super(props,context);
 
-    const issues = context.initialState.data.records;
+    const issues = context.initialState.IssueList ? context.initialState.IssueList.records: [];
 
     issues.forEach( issue => {
       issue.created = new Date(issue.created);
@@ -167,6 +195,7 @@ export default class IssueList extends React.Component {
   }
 
   loadData() {
+
     const sWho = 'loadData';
 
     // const url = '/api/issues';
@@ -174,34 +203,26 @@ export default class IssueList extends React.Component {
 
     console.log(`${sWho}(): Calling fetch("${url}")...\n`);
 
-    fetch(url)
-      .then((response) => {
-        console.log(`${sWho}(): recieved response = `, response);
-        if (response.ok) {
-          response.json()
-            .then((data) => {
-              console.log('Total count of records:', data._metadata.total_count);
+    IssueList.dataFetcher({location: this.props.location})
+    .then(data => {
 
-              data.records.forEach((issue) => {
-                // Convert from ISO string to Date object...
-                issue.created = new Date(issue.created);
-                if (issue.completionDate) {
-                  issue.completionDate = new Date(issue.completionDate);
-                }
-              });
+      const issues = data.IssueList.records;
 
-              this.setState({ issues: data.records });
-            });
-        } else {
-          response.json()
-            .then((error) => {
-              this.showError(`Failed to fetch issues:${error.message}`);
-            });
+      issues.forEach(issue => {
+        // Convert from ISO date string to Date object...
+        issue.created = new Date(issue.created);
+
+        if (issue.completionDate) {
+          issue.completionDate = new Date(issue.completionDate);
         }
-      })
-      .catch((err) => {
-        this.showError('HTTP Error in fetching data from server:', err);
       });
+
+      this.setState({issues});
+    })
+    .catch((err) => {
+      console.log(`${sWho}(): Caught error:`, err );
+      this.showError('HTTP Error in fetching data from server:', err);
+    });
   }/* loadData() */
 
 

@@ -336,13 +336,6 @@ app.delete('/api/issues/:id', (req, res) => {
     });
 });
 
-// For browser history rather than hash-based
-// routing, if we don't match with any of the
-// previous routes, always return the same
-// page for an SPA: index.html
-// app.get('*', (req, res) => {
-// res.sendFile(path.resolve('static/index.html'));
-//});
 
 //console.log("I'll be back, Bennett!");
 //console.log("Let off some steam, Bennett!");
@@ -350,15 +343,6 @@ app.delete('/api/issues/:id', (req, res) => {
 
 app.use('/', renderedPageRouter);
 
-//MongoClient.connect(Config.DB_URL)
-//  .then((connection) => {
-//    db = connection;
-//    app.listen(Config.PORT, () => {
-//      logger.info(`App started on port ${Config.PORT}`);
-//    });
-//  }).catch((error) => {
-//    logger.error('ERROR:', error);
-//  });
 
 function setDb(newDb){
   db = newDb;

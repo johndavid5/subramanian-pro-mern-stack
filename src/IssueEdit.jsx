@@ -10,6 +10,23 @@ import Toast from './Toast.jsx';
 import Utils from './Utils.jsx';
 
 export default class IssueEdit extends React.Component { // eslint-disable-line
+
+  static dataFetcher({params, urlBase}){
+    return fetch(`${urlBase||''}/api/issues/${params.id}`)
+    .then( response => {
+      if(!response.ok){ 
+        return response.json()
+        .then( error => Promise.reject(error) );
+      }
+
+      return response.json()
+      .then( data =>
+         ({ IssueEdit: data })
+      );
+    });
+
+  }
+
   constructor(props, context) {
 
     const sWho = 'IssueEdit::constructor';
@@ -17,18 +34,26 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
 
     super(props, context);
 
-    const issue = context.initialState.data;
-    issue.created = new Date(issue.created);
-    issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate): null;
+    let issue;
 
-    // Create initial state in constructor with
-    // empty string, otherwise React assumes
-    // the input fields were uncontrolled components.
-    // Then when set to non-null values by the API
-    // call, React assumes we've converted an uncontrolled
-    // component to a controlled one, and issues a warning.
+    if(context.initialState.IssueEdit){
+      issue = context.initialState.IssueEdit;
+      issue.created = new Date(issue.created);
+      issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate): null;
+    }
+    else {
+      issue = {
+        _id: '',
+		title: '',
+	    status: '',
+        owner: '',
+        effort: null,
+        completionDate: null,
+	    created: null,
+      };
+    }
+
     this.state = {
-      //issue: { _id: '', title: '', status: '', owner: '', effort: null, completionDate: null, created: null, },
       issue, // shorthand for issue: issue
       invalidFields: {},
       showingValidation: false,
@@ -173,44 +198,17 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
 
     console.log(`${sWho}()...`);
 
-    fetch(`/api/issues/${this.props.params.id}`)
-      .then((response) => {
-        if (response.ok) {
-
-          response.json()
-          .then((issue) => {
-              console.log(`${sWho}(): issue as returned by database = `, issue);
-
-              // issue.created = new Date(issue.created).toDateString();
-              issue.created = new Date(issue.created);
-
-              // store "completionDate" as Date rather than string...
-              // issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate).toDateString():'';
-              issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate) : null;
-
-		  // store "effort" as Numeric type rather than string...leave as is coming from database...
-              // issue.effort = issue.effort != null ? issue.effort.toString():'';
-
-              console.log(`${sWho}(): issue after massaging = `, issue);
-
-              console.log(`${sWho}(): Before this.setState({issue}), this.state = `, this.state);
-              this.setState(
-                { issue },
-                () => {
-                  console.log(`${sWho}(): After this.setState({issue}), this.state = `, this.state);
-                },
-		  );
-            });
-        } else {
-          response.json()
-          .then((error) => {
-              this.showError(`Failed to fetch issue: ${error.message}`);
-          });
-        }
-      })
-      .catch((err) => {
-        this.showError(`Error in fetching data from server: ${err.message}`);
-      });
+    IssueEdit.dataFetcher({params: this.props.params})
+    .then(data => {
+       const issue = data.IssueEdit;
+       issue.created = new Date(issue.created);
+       issue.completionDate = issue.completionDate != null ? new Date(issue.completionDate) : null;
+       this.setState({issue}); 
+    })
+    .catch((err) => {
+      console.log(`${sWho}(): Caught error:`, err );
+      this.showError(`Error in fetching data from server: ${err.message}`);
+    });
   }
 
   render() {
