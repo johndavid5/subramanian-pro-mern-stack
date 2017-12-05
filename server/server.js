@@ -89,31 +89,45 @@ app.get('/api/issues', (req, res) => {
   if( req.query._summary === undefined ){
     // Plain old GET of issues...
 
+    // offset defaults to 0 (zero)...
+    const offset = req.query._offset ? parseInt(req.query._offset, 10) : 0;
+
     // limit defaults to 20... 
-    let limit = req.query.limit ? parseInt(req.query._limit, 10) : 20;
+    let limit = req.query._limit ? parseInt(req.query._limit, 10) : 20;
 
     // max limit limited to 50...
     if( limit > 50 ){
       limit = 50;
     }
 
-    console.log(`${sWho}: db.collection("issues").find( filter = `, filter, `).limit( ${limit} )...`);
+    console.log(`${sWho}: db.collection("issues").find( filter = `, filter, `).skip( ${offset} ).limit( ${limit} )...`);
 
-    db.collection('issues').find(filter).limit(limit).toArray()
-      .then((issues) => {
-        const metadata = { total_count: issues.length };
+   const cursor = db.collection('issues').find(filter)
+    .sort({_id: 1})
+    .skip(offset)
+    .limit(limit);
 
-        console.log(`${sWho}: sending JSON to client, metadata = `, metadata);
-        res.json({ _metadata: metadata, records: issues });
-      })
-      .catch((error) => {
-        var message = { message: `Internal Server Error: ${error}` };
-        console.log(`${sWho}: Caught an Exception...Sending Code 500 and JSON `, message, ` to client...`);
-        res.status(500).json(message);
-      });
+   let totalCount;
+   // cursor.count(false) --supposedly returns total count regardless of filters...
+   // ...suuuuuure...I believe ya...
+   cursor.count(false) 
+   .then(result => {
+     totalCount = result;
+     return cursor.toArray();
+   })
+   .then(issues=>{
+     let sender = {metadata: {totalCount}, records: issues};
+     console.log(`${sWho}: sending JSON to client, metadata = `, sender.metadata);
+     res.json( sender );
+   })
+   .catch((error) => {
+     var le_message = { message: `Internal Server Error: ${error}` };
+     console.log(`${sWho}: Sorry, Moe, caught an Exception...sending code 500 and JSON `, le_message, ` to client...`);
+     res.status(500).json(le_message);
+   });
   } else {
-    // Not a plain old GET of issues...aggregated report of issues...
-		  //
+    // Not a plain old GET of issues...
+    // ...aggregated report of issues...
 
     let aggregatee = [
       { $match: filter },

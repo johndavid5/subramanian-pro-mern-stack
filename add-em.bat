@@ -32,6 +32,8 @@ call git add webpack.server-config.js
 
 call git add ./client/Client.jsx
 
+call git add ./scripts/delete.mongo.bat
+call git add ./scripts/delete.mongo.js
 call git add ./scripts/init.mongo.js
 call git add ./scripts/init.mongo.bat
 call git add ./scripts/generate_data.mongo.bat*
