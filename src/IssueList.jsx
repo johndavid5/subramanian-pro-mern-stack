@@ -8,11 +8,13 @@ import PropTypes from 'prop-types';
 import 'isomorphic-fetch'; // polyfill for Fetch API for dinosaur browsers...
 
 import { Link } from 'react-router';
-import { Button, Glyphicon, Table, Panel } from 'react-bootstrap';
+import { Button, Glyphicon, Table, Panel, Pagination } from 'react-bootstrap';
 
 import IssueFilter from './IssueFilter.jsx';
 import Toast from './Toast.jsx';
 import Utils from './Utils.jsx';
+
+const PAGE_SIZE = 10;
 
 const IssueRow = (props) => {
 
@@ -90,12 +92,32 @@ export default class IssueList extends React.Component {
 
     const sWho = "IssueList::dataFetcher";
 
-    const url = `${urlBase||''}/api/issues${location.search}`;
+    //const url = `${urlBase||''}/api/issues${location.search}`;
+
+    //console.log(`${sWho}(): fetching ${url}...`); 
+
+    //return fetch(url)
+    //.then(response => { 
+
+    const query = Object.assign({}, location.query);
+
+    const pageStr = query._page;
+
+    if( pageStr ){
+      delete query._page;
+      query._offset = (parseInt(pageStr, 10)-1)*PAGE_SIZE;
+    }
+
+    query._limit = PAGE_SIZE;
+
+    const search = Object.keys(query).map(k=>`${k}=${query[k]}`).join('&');
+
+    const url = `${urlBase||''}/api/issues?${search}`;
 
     console.log(`${sWho}(): fetching ${url}...`); 
 
     return fetch(url)
-    .then(response => { 
+    .then( response => {
 
       if(!response.ok){
         return response.json()
@@ -118,7 +140,11 @@ export default class IssueList extends React.Component {
 
     super(props,context);
 
-    const issues = context.initialState.IssueList ? context.initialState.IssueList.records: [];
+    //const issues = context.initialState.IssueList ? context.initialState.IssueList.records: [];
+
+    const data = context.initialState.IssueList ? context.initialState.IssueList : { metadata: { totalCount: 0 }, records: [] };
+
+    const issues = data.records;
 
     issues.forEach( issue => {
       issue.created = new Date(issue.created);
@@ -130,6 +156,7 @@ export default class IssueList extends React.Component {
     this.state = {
       //issues: [],
       issues, // shorthand for issues: issues
+      totalCount: data.metadata.totalCount,
       toastVisible: false,
       toastMessage: '',
       toastType: 'success',
@@ -140,6 +167,7 @@ export default class IssueList extends React.Component {
     // the constructor since it's now being
     // called from another component...
     this.setFilter = this.setFilter.bind(this);
+    this.selectPage = this.selectPage.bind(this);
 
     this.deleteIssue = this.deleteIssue.bind(this);
 
@@ -167,6 +195,7 @@ export default class IssueList extends React.Component {
     if (oldQuery.status === newQuery.status
 		&& oldQuery.effort_gte === newQuery.effort_gte
 		&& oldQuery.effort_lte === newQuery.effort_lte
+		&& oldQuery._page === newQuery._page
     ) {
       return;
     }
@@ -184,6 +213,22 @@ export default class IssueList extends React.Component {
   setFilter(query) {
     // Keep the pathname the same, modify only the query string...
     this.props.router.push({ pathname: this.props.location.pathname, query });
+  }
+
+  selectPage(eventKey){
+
+    const sWho = "IssueList::selectPage";
+
+    console.log(`${sWho}(): eventKey = `, eventKey );
+    console.log(`${sWho}(): Current query = `, query, `...`);
+
+    // Push the page number as _page parameter to the URL...
+    const query = Object.assign(this.props.location.query,
+			{ _page: eventKey});
+
+    console.log(`${sWho}(): Pushing updated query = `, query, ` to router...`);
+
+    this.props.router.push({pathname: this.props.location.pathname, query});
   }
 
   showError(message){
@@ -217,7 +262,7 @@ export default class IssueList extends React.Component {
         }
       });
 
-      this.setState({issues});
+      this.setState({issues, totalCount: data.IssueList.metadata.totalCount});
     })
     .catch((err) => {
       console.log(`${sWho}(): Caught error:`, err );
@@ -246,6 +291,12 @@ export default class IssueList extends React.Component {
         <Panel collapsible header="Filter">
           <IssueFilter setFilter={this.setFilter} initFilter={this.props.location.query} />
         </Panel>
+        <Pagination items={Math.ceil(this.state.totalCount/PAGE_SIZE)}       
+         activePage={parseInt(this.props.location.query._page||'1', 10)}
+         onSelect={this.selectPage}
+         maxButtons={7}
+	     next prev boundaryLinks 
+        />
         <IssueTable issues={this.state.issues} deleteIssue={this.deleteIssue} />
         <Toast
          showing={this.state.toastVisible}

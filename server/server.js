@@ -100,19 +100,51 @@ app.get('/api/issues', (req, res) => {
       limit = 50;
     }
 
-    console.log(`${sWho}: db.collection("issues").find( filter = `, filter, `).skip( ${offset} ).limit( ${limit} )...`);
+    let sortBy = req.query._sortby ? req.query._sortby : '_id';
 
+    let ascDesc = req.query._ascdesc ? parseInt(req.query._ascdesc, 10) : 1;
+
+    console.log(`${sWho}(): sortBy = ${sortBy}, ascDesc = ${ascDesc}...`);
+
+    let oSort = {};
+    oSort[sortBy] = ascDesc;
+
+    console.log(`${sWho}(): Let off some steam, Bennett!`);
+
+    console.log(`${sWho}: db.collection("issues").find( filter = `, filter, `).sort(`, oSort, `).skip( ${offset} ).limit( ${limit} )...`);
+
+//    let totalCount;
+//    
+//    db.collection('issues').find(filter).count()
+//    .then((count) => {
+//      totalCount = count;
+//      console.log(`${sWho}: Got totalCount = count = `, totalCount );
+//      db.collection('issues').find(filter).sort({_id: 1}).skip(offset).limit(limit).toArray()
+//    })
+//    .then((issues) => {
+//      let sender = {metadata: {totalCount}, records: issues};
+//      console.log(`${sWho}: sending JSON to client, metadata = `, sender.metadata);
+//      res.json( sender );
+//    })
+//    .catch((error) => {
+//      var message = { message: `Internal Server Error: ${error}` };
+//      console.log(`${sWho}: Caught an Exception...Sending Code 500 and JSON `, message, ` to client...`);
+//      res.status(500).json(message);
+//    });
+
+   // Subramanian's one-liner to get total count -- without skip and limit --
+   // and results -- with skip and limit -- all at the same time...
    const cursor = db.collection('issues').find(filter)
-    .sort({_id: 1})
+    .sort(oSort)
     .skip(offset)
     .limit(limit);
 
    let totalCount;
-   // cursor.count(false) --supposedly returns total count regardless of filters...
-   // ...suuuuuure...I believe ya...
+   // NOTE: cursor.count(false) -- returns total count regardless of skip and limit...
    cursor.count(false) 
    .then(result => {
      totalCount = result;
+     console.log(`${sWho}: Got totalCount = result = `, result, `returning cursor.toArray()...` );
      return cursor.toArray();
    })
    .then(issues=>{
@@ -125,6 +157,7 @@ app.get('/api/issues', (req, res) => {
      console.log(`${sWho}: Sorry, Moe, caught an Exception...sending code 500 and JSON `, le_message, ` to client...`);
      res.status(500).json(le_message);
    });
+
   } else {
     // Not a plain old GET of issues...
     // ...aggregated report of issues...
