@@ -4,22 +4,18 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router';
 import { NavItem, Glyphicon, Modal, Form, FormGroup, FormControl, ControlLabel, Button, ButtonToolbar } from 'react-bootstrap';
 
-import Toast from './Toast.jsx';
+// Access toast func. via props...
+//import Toast from './Toast.jsx';
 
 class IssueAddNavItem extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       showing: false,
-      toastVisible: false,
-      toastMessage: '',
-      toastType: 'success',
     };
     this.showModal = this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.submit = this.submit.bind(this);
-    this.showError = this.showError.bind(this);
-    this.dismissToast = this.dismissToast.bind(this);
   }
 
   showModal() {
@@ -28,14 +24,6 @@ class IssueAddNavItem extends React.Component {
 
   hideModal() {
     this.setState({ showing: false });
-  }
-
-  showError(message) {
-    this.setState({ toastVisible: true, toastMessage: message, toastType: 'danger' });
-  }
-
-  dismissToast() {
-    this.setState({ toastVisible: false });
   }
 
   submit(e) {
@@ -57,21 +45,45 @@ class IssueAddNavItem extends React.Component {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newIssue),
     }).then((response) => {
+
+      //if (response.ok) {
+      //  response.json().then(updatedIssue => {
+      //    this.props.router.push(`/issues/${updatedIssue._id}`);
+      //  });
+      //} else {
+      //  response.json().then(error => {
+      //    this.props.showError(`withToast: Failed to add issue: ${error.message}`);
+      //  });
+      //}
+
       if (response.ok) {
         response.json()
           .then((updatedIssue) => {
             // Go to the new issue...
             this.props.router.push(`/issues/${updatedIssue._id}`);
-          });
+          })
       } else {
         response.json()
           .then( (error) => {
-            this.showError(`Failed to add issue: ${error.message}`);
-		  }); 
+            this.props.showError(`withToast: Failed to add issue: ${error.message}`);
+		  }) 
+          .catch( err => {
+            // "Unexpected token E in JSON at position 0"
+		    // This is an error from JSON parser attempting to parse HTTP response body
+		    // "Error occured while trying to proxy to: localhost:8000/api/issues"
+		    // Perhaps we can figure out a more graceful way to handle this...
+            //this.props.showError(`withToast: Failed to add issue err: ${err.message}`);
+		    //
+		    // Actually, this only seems to be an issue when you use webpack-server
+			// as a proxy to the actual node server, the rest of the time you
+		    // get a simple wholesome err caught at the bottom .catch()...
+            console.log("response=", response);
+            this.props.showError(`withToast: Failed to add issue err: ${response.status}: ${response.statusText}`);
+		  }) 
       }
     })
     .catch(err => {
-      this.showError(`Error in sending data to server: ${err.message}`);
+      this.props.showError(`withToast: Error in sending data to server: ${err.message}`);
     });
   }/* submit() */
 
@@ -102,7 +114,6 @@ class IssueAddNavItem extends React.Component {
             </ButtonToolbar>
           </Modal.Footer>
         </Modal>
-        <Toast showing={this.state.toastVisible} message={this.state.toastMessage} onDismiss={this.dismissToast} bsStyle={this.state.toastType} />
       </NavItem>
     );
   }/* render() */
@@ -110,6 +121,7 @@ class IssueAddNavItem extends React.Component {
 
 IssueAddNavItem.propTypes = {
   router: PropTypes.object,
+  showError: PropTypes.func.isRequired,
 }
 
 // Inject the router property into the components which need it, using

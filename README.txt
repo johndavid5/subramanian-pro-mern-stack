@@ -26,15 +26,32 @@ https://developer.github.com/v3/guides/traversing-with-pagination/
 https://react-bootstrap.github.io
 https://react-bootstrap.github.io/components.html
 
+
 For webpack-dev-server with compiling and pushing of new changes:
 -----------------------------------------------------------------
 1. Run npm run watch in one window. 
+   (runs webpack-dev-server...listens on port 8000...
+    ...connects to the node server on port 3000)
 
 2. Run npm run watch-server
 
 3. Run npm run start
 
-3. Go to http://localhost:8000
+4. Go to http://localhost:8000
+
+
+Without webpack-dev-server compiling but not pushing
+new front-end changes:
+-----------------------------------------------------------------
+1. Run npm run uwatch in one window. 
+   (runs webpack --watch, but not webpack-dev-server)
+
+2. Run npm run watch-server
+
+3. Run npm run start (runs node server on port 3000)
+
+4. Go to http://localhost:3000
+
 
 
 For production deployment:

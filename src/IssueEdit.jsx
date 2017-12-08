@@ -6,10 +6,11 @@ import { FormGroup, FormControl, ControlLabel, ButtonToolbar, Button, Panel, For
 
 import NumInput from './NumInput.jsx';
 import DateInput from './DateInput.jsx';
-import Toast from './Toast.jsx';
+//import Toast from './Toast.jsx';
+import withToast from './withToast.jsx'; 
 import Utils from './Utils.jsx';
 
-export default class IssueEdit extends React.Component { // eslint-disable-line
+class IssueEdit extends React.Component { // eslint-disable-line
 
   static dataFetcher({params, urlBase}){
     return fetch(`${urlBase||''}/api/issues/${params.id}`)
@@ -57,17 +58,10 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
       issue, // shorthand for issue: issue
       invalidFields: {},
       showingValidation: false,
-      toastVisible: false,
-      toastMessage: '',
-      toastType: 'success',
     };
 
     this.dismissValidation = this.dismissValidation.bind(this);
     this.showValidation = this.showValidation.bind(this);
-
-    this.showSuccess = this.showSuccess.bind(this);
-    this.showError = this.showError.bind(this);
-    this.dismissToast = this.dismissToast.bind(this);
 
     this.onChange = this.onChange.bind(this);
     this.onValidityChange = this.onValidityChange.bind(this);
@@ -140,19 +134,6 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
   dismissValidation(){
     this.setState({showingValidation: false});
   }
-			
-  showSuccess(message){
-    this.setState({ toastVisible: true, toastMessage: message, toastType: 'success'});
-  }
-
-  showError(message){
-    this.setState({ toastVisible: true, toastMessage: message, toastType: 'danger'});
-  }
-
-  dismissToast(message){
-    this.setState({ toastVisible: false});
-  }
-
 
   onSubmit(event) {
 
@@ -178,17 +159,16 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
             }
 
             this.setState({ issue: updatedIssue });
-            //alert('Updated issue successfully.');
-			this.showSuccess('Updated issue successfully.');
+			this.props.showSuccess('Updated issue successfully.');
           });
       } else {
         response.json()
           .then((error) => {
-            this.showSuccess(`Failed to update issue: ${error.message}`);
+            this.props.showError(`Failed to update issue: ${error.message}`);
           });
       }
     }).catch((err) => {
-      this.showSuccess(`Error in sending data to server: ${err.message}`);
+      this.props.showError(`Error in sending data to server: ${err.message}`);
     });
   }/* onSubmit() */
 
@@ -207,7 +187,7 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
     })
     .catch((err) => {
       console.log(`${sWho}(): Caught error:`, err );
-      this.showError(`Error in fetching data from server: ${err.message}`);
+      this.props.showError(`Error in fetching data from server: ${err.message}`);
     });
   }
 
@@ -314,11 +294,6 @@ export default class IssueEdit extends React.Component { // eslint-disable-line
             <Col smOffset={3} sm={9}>{validationMessage}</Col>
           </FormGroup>
         </Form>
-        <Toast showing={this.state.toastVisible}
-         message={this.state.toastMessage}
-         onDismiss={this.dismissToast} 
-         bsStyle={this.state.toastType}
-        />
         {((props, state) => { // Equivalent of Angular ng-if using IIFE()
             /* console.log('IssueEdit: this.props=', props); */
             /* console.log('IssueEdit: this.props.location=', this.props.location); */
@@ -345,4 +320,21 @@ IssueEdit.contextTypes = {
 
 IssueEdit.propTypes = {
   params: PropTypes.object.isRequired,
+  showSuccess: PropTypes.func.isRequired,
+  showError: PropTypes.func.isRequired,
 };
+
+// Use the Higher Order Component design pattern
+// to enhance IssueEdit with Toast functionality...
+const IssueEditWithToast = withToast(IssueEdit);
+
+// There's one change that an HOC causes: any static
+// functions that you used in the original component 
+// are no longer available in the wrapped component.
+// We must explicitly copy the static functions from
+// the original to the wrapped.
+IssueEditWithToast.dataFetcher = IssueEdit.dataFetcher;
+
+export default IssueEditWithToast;
+
+

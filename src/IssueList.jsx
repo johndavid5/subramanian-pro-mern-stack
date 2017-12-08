@@ -11,7 +11,8 @@ import { Link } from 'react-router';
 import { Button, Glyphicon, Table, Panel, Pagination } from 'react-bootstrap';
 
 import IssueFilter from './IssueFilter.jsx';
-import Toast from './Toast.jsx';
+//import Toast from './Toast.jsx';
+import withToast from './withToast.jsx';
 import Utils from './Utils.jsx';
 
 const PAGE_SIZE = 10;
@@ -53,7 +54,7 @@ IssueRow.propTypes = {
 // The view is a pure function of its props.
 function IssueTable(props) {
 
-  var sWho = "IssueTable";
+  var sWho = "IssueTable;"
 
   const issueRows = props.issues.map(
     issue =>
@@ -62,12 +63,21 @@ function IssueTable(props) {
 
   console.log(`${sWho}(): issueRows = `, issueRows );
 
+  // https://reactjs.org/docs/handling-events.html
+  function onSortClick(sortField, e){
+    // Delegate to parent-supplied sorter...
+    let sWho = "IssueTable::onSortClick";
+    console.log(`${sWho}(): sortField = "`, sortField, `", e = `, e , `...`);
+    console.log(`${sWho}(): e.currentTarget = `, e.currentTarget );
+    props.sortBy(sortField);
+  }
+
   return (
     <Table bordered condensed hover responsive>
       <thead>
         <tr>
-          <th>Id</th>
-          <th>Status</th>
+          <th onClick={(e) => onSortClick('id', e)}>Id <Button bsSize="xsmall" className="arrow"><Glyphicon glyph="arrow-up" /></Button></th>
+          <th onClick={(e) => onSortClick('status', e)}>Status</th>
           <th>Owner</th>
           <th>Created</th>
           <th>Effort</th>
@@ -84,9 +94,10 @@ function IssueTable(props) {
 IssueTable.propTypes = {
   issues: PropTypes.array.isRequired,
   deleteIssue: PropTypes.func.isRequired,
+  sortBy: PropTypes.func.isRequired,
 };
 
-export default class IssueList extends React.Component {
+class IssueList extends React.Component {
 
   static dataFetcher({urlBase, location}){
 
@@ -140,8 +151,6 @@ export default class IssueList extends React.Component {
 
     super(props,context);
 
-    //const issues = context.initialState.IssueList ? context.initialState.IssueList.records: [];
-
     const data = context.initialState.IssueList ? context.initialState.IssueList : { metadata: { totalCount: 0 }, records: [] };
 
     const issues = data.records;
@@ -154,12 +163,8 @@ export default class IssueList extends React.Component {
     });
 
     this.state = {
-      //issues: [],
       issues, // shorthand for issues: issues
       totalCount: data.metadata.totalCount,
-      toastVisible: false,
-      toastMessage: '',
-      toastType: 'success',
 	};
 
     // Bind once...re-use multiple times...
@@ -168,11 +173,9 @@ export default class IssueList extends React.Component {
     // called from another component...
     this.setFilter = this.setFilter.bind(this);
     this.selectPage = this.selectPage.bind(this);
+    this.sortBy = this.sortBy.bind(this);
 
     this.deleteIssue = this.deleteIssue.bind(this);
-
-    this.showError = this.showError.bind(this);
-    this.dismissToast = this.dismissToast.bind(this);
   }
 
 
@@ -220,7 +223,7 @@ export default class IssueList extends React.Component {
     const sWho = "IssueList::selectPage";
 
     console.log(`${sWho}(): eventKey = `, eventKey );
-    console.log(`${sWho}(): Current query = `, query, `...`);
+    console.log(`${sWho}(): Current query = this.props.location.query =`, this.props.location.query, `...`);
 
     // Push the page number as _page parameter to the URL...
     const query = Object.assign(this.props.location.query,
@@ -231,12 +234,19 @@ export default class IssueList extends React.Component {
     this.props.router.push({pathname: this.props.location.pathname, query});
   }
 
-  showError(message){
-    this.setState({toastVisible: true, toastMessage: message, toastType: 'danger'});
-  }
+  sortBy(sortField){
 
-  dismissToast(){
-    this.setState({toastVisible: false});
+    const sWho = "IssueList::sortBy";
+
+    console.log(`${sWho}(): sortField = `, sortField );
+    console.log(`${sWho}(): Current query = this.props.location.query =`, this.props.location.query, `...`);
+
+    //const query = Object.assign(this.props.location.query,
+	//		{ _page: eventKey});
+
+    //console.log(`${sWho}(): Pushing updated query = `, query, ` to router...`);
+
+    //this.props.router.push({pathname: this.props.location.pathname, query});
   }
 
   loadData() {
@@ -266,20 +276,27 @@ export default class IssueList extends React.Component {
     })
     .catch((err) => {
       console.log(`${sWho}(): Caught error:`, err );
-      this.showError('HTTP Error in fetching data from server:', err);
+      this.props.showError('HTTP Error in fetching data from server:', err);
     });
   }/* loadData() */
 
 
   deleteIssue(id){
+    const sWho = 'deleteIssue';
+
     fetch(`/api/issues/${id}`, { method: 'DELETE'}
     ).then(response => {
       if(!response.ok){  
-        alert('Failed to delete issue.');
+        console.log(`${sWho}(): response.ok != true...`);
+        this.props.showError('Failed to delete issue.');
       }
       else{
         this.loadData();
       }
+    })
+    .catch((err) => {
+      console.log(`${sWho}(): Caught error:`, err );
+      this.props.showError('HTTP Error in deleting issue from server:', err);
     });
   }
 
@@ -297,13 +314,7 @@ export default class IssueList extends React.Component {
          maxButtons={7}
 	     next prev boundaryLinks 
         />
-        <IssueTable issues={this.state.issues} deleteIssue={this.deleteIssue} />
-        <Toast
-         showing={this.state.toastVisible}
-         message={this.state.toastMessage}
-         onDismiss={this.dismissToast} 
-         bsStyle={this.state.toastType}
-        />
+        <IssueTable issues={this.state.issues} deleteIssue={this.deleteIssue} sortBy={this.sortBy} />
         {(function (props) { // Equivalent of Angular ng-if using IIFE()
           if (Utils.stringToBool(props.location.query.debug)) {
             return (<pre>this.props={JSON.stringify(props, null, 2)}</pre>);
@@ -322,5 +333,16 @@ IssueList.contextTypes = {
 IssueList.propTypes = {
   location: PropTypes.object.isRequired,
   router: PropTypes.object,
+  showError: PropTypes.func.isRequired,
 };
+
+const IssueListWithToast = withToast(IssueList);
+
+// After enhancing IssueList using withToast(), gotta
+// re-assign the static methods...this is progress?
+IssueListWithToast.dataFetcher = IssueList.dataFetcher;
+
+export default IssueListWithToast;
+
+
 

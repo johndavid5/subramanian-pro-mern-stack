@@ -1,6 +1,7 @@
 import 'babel-polyfill';
 import React from 'react';
 import PropTypes from 'prop-types';
+import withToast from './withToast.jsx';
 
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Glyphicon } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -14,7 +15,7 @@ console.log(`**** App.js, VERSION ${VERSION} ***`);
 console.log('I\'ll be back, Bennett!');
 console.log('Let off some steam, Bennett!');
 
-const Header = () => (
+const Header = (props) => (
   <Navbar fluid>
     <Navbar.Header>
       <Navbar.Brand>Issue Tracker</Navbar.Brand>
@@ -28,7 +29,7 @@ const Header = () => (
       </LinkContainer>
     </Nav>
     <Nav pullRight>
-      <IssueAddNavItem />
+      <IssueAddNavItem showError={props.showError}/>
       <NavDropdown id="user-dropdown" title={<Glyphicon glyph="option-horizontal" />} noCaret>
         <MenuItem>Logout</MenuItem>
       </NavDropdown>
@@ -36,9 +37,17 @@ const Header = () => (
   </Navbar>
 );
 
+Header.propTypes = {
+  showError: PropTypes.func.isRequired,
+}
+
+// Use HeaderWithToast to pass showError() through
+// via props to IssueAddNavItem.
+const HeaderWithToast = withToast(Header);
+
 const App = props => (
   <div>
-    <Header />
+    <HeaderWithToast />
     <div className="container-fluid">
       {props.children}
       <hr />
