@@ -18,6 +18,7 @@
     "twatch": "webpack --watch | perl ./scripts/tail.pl",
     "test": "mocha --watch --recursive",
     "bootstrap-copy": "cp -r ./node_modules/bootstrap/dist ./static/bootstrap",
+    "react-select-copy": "cp -r ./node_modules/react-select/dist ./static/react-select",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --recursive",
     "lint": "eslint.cmd --ext jsx,js src server webpack.config.js",
     "b-lint": "scripts\\b-eslint.bat",
@@ -58,6 +59,7 @@
     "react-dom": "^15.3.1",
     "react-router": "^2.7.0",
     "react-router-bootstrap": "^0.23.1",
+    "react-select": "^1.1.0",
     "serve-favicon": "^2.4.5",
     "source-map-support": "^0.5.0"
   },

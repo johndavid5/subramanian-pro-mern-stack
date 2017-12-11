@@ -48,6 +48,11 @@ db.issues.insertMany([
     created: new Date('2017-09-16'), effort: 15, completionDate: undefined,
     title: 'A song to sing.',
   },
+  {
+    status: 'Assigned', owner: 'Arnie',
+    created: new Date('2017-09-16'), effort: 15, completionDate: undefined,
+    title: 'Let off some steam, Bennett!',
+  },
 ]);
 
 db.issues.createIndex({ status: 1 });

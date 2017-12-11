@@ -36,6 +36,10 @@ call git add ./scripts/delete.mongo.bat
 call git add ./scripts/delete.mongo.js
 call git add ./scripts/init.mongo.js
 call git add ./scripts/init.mongo.bat
+call git add ./scripts/index.mongo.js
+call git add ./scripts/index.mongo.bat
+call git add ./scripts/insert.mongo.js
+call git add ./scripts/insert.mongo.bat
 call git add ./scripts/generate_data.mongo.bat*
 call git add ./scripts/generate_data.mongo.js
 
@@ -55,6 +59,7 @@ call git add ./src/App.jsx
 call git add ./src/ContextWrapper.jsx
 call git add ./src/Dashboard.jsx
 call git add ./src/DateInput.jsx
+call git add ./src/Header.jsx
 call git add ./src/HelloWorld.jsx
 call git add ./src/IssueAdd.jsx
 call git add ./src/IssueAddNavItem.jsx

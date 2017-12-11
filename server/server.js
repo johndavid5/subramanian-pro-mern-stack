@@ -67,6 +67,7 @@ app.get('/api/issues', (req, res) => {
   }
 
   if (req.query.effort_lte || req.query.effort_gte) {
+
     filter.effort = {};
 
   	if (req.query.effort_lte) {
@@ -82,6 +83,10 @@ app.get('/api/issues', (req, res) => {
       // to default to 10.
       filter.effort.$gte = parseInt(req.query.effort_gte, 10);
     }
+  }
+
+  if( req.query.search ){
+    filter.$text = { $search: req.query.search };
   }
 
   console.log(`${sWho}: filter = `, filter, '...');

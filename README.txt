@@ -64,15 +64,27 @@ For production deployment:
 3. Run npm start -- this will run the server in ./dist/server.js,
    listening on localhost:3000
 
-NOTE: In addition to running "npm install", right now we are
+* NOTE: In addition to running "npm install", right now we are
 copying the bootstrap distribution from ./node_modules/boostrap.dist
 to ./static/bootstrap, so run "npm run bootstrap-copy" which does
+
  $ cp -r ./node_modules/bootstrap/dist ./static/bootstrap.  This
 is for use primarily of the CSS, as the JavaScript is included
 in react-boostrap.
 
   On Linux you could do a soft-link instead:
- $ cp -r ./node_modules/bootstrap/dist ./static/bootstrap.  This
+ $ ln -s ./node_modules/bootstrap/dist ./static/bootstrap.  
   Later on, if we feel like showing off, we can use "webpack" to
 insert bootstrap's CSS into the DOM as a <style>...</style> element.
+
+* Also run "npm run react-select-copy" which does
+
+ $ cp -r ./node_modules/react-select/dist ./static/react-select
+
+This is for use primarily of the CSS, as the JavaScript is included
+in react-boostrap.
+
+  On Linux you could do a soft-link instead:
+ $ ln -s ./node_modules/react-select/dist ./static/react-select.
+
 

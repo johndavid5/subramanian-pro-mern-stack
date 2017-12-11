@@ -52,7 +52,7 @@ class IssueAddNavItem extends React.Component {
       //  });
       //} else {
       //  response.json().then(error => {
-      //    this.props.showError(`withToast: Failed to add issue: ${error.message}`);
+      //    this.props.showError(`Failed to add issue: ${error.message}`);
       //  });
       //}
 
@@ -65,25 +65,25 @@ class IssueAddNavItem extends React.Component {
       } else {
         response.json()
           .then( (error) => {
-            this.props.showError(`withToast: Failed to add issue: ${error.message}`);
+            this.props.showError(`Failed to add issue: ${error.message}`);
 		  }) 
           .catch( err => {
             // "Unexpected token E in JSON at position 0"
 		    // This is an error from JSON parser attempting to parse HTTP response body
 		    // "Error occured while trying to proxy to: localhost:8000/api/issues"
 		    // Perhaps we can figure out a more graceful way to handle this...
-            //this.props.showError(`withToast: Failed to add issue err: ${err.message}`);
+            //this.props.showError(`Failed to add issue err: ${err.message}`);
 		    //
 		    // Actually, this only seems to be an issue when you use webpack-server
 			// as a proxy to the actual node server, the rest of the time you
 		    // get a simple wholesome err caught at the bottom .catch()...
             console.log("response=", response);
-            this.props.showError(`withToast: Failed to add issue err: ${response.status}: ${response.statusText}`);
+            this.props.showError(`Failed to add issue err: ${response.status}: ${response.statusText}`);
 		  }) 
       }
     })
     .catch(err => {
-      this.props.showError(`withToast: Error in sending data to server: ${err.message}`);
+      this.props.showError(`Error in sending data to server: ${err.message}`);
     });
   }/* submit() */
 
