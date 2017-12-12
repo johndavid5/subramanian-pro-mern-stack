@@ -69,6 +69,7 @@ call git add ./src/IssueList.jsx
 call git add ./src/IssueReport.jsx
 call git add ./src/NumInput.jsx
 call git add ./src/Routes.jsx
+call git add ./src/SignInNavItem.jsx
 call git add ./src/Toast.jsx
 call git add ./src/Utils.jsx
 call git add ./src/withToast.jsx

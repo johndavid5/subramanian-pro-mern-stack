@@ -281,7 +281,7 @@ class IssueEdit extends React.Component { // eslint-disable-line
           <FormGroup>
             <Col smOffset={3} sm={6}>
               <ButtonToolbar>
-                <Button bsStyle="primary" type="submit">
+                <Button bsStyle="primary" type="submit" disabled={!this.props.user.signedIn}>
                 Submit
                 </Button>
                 <LinkContainer to="/issues">
@@ -322,6 +322,7 @@ IssueEdit.propTypes = {
   params: PropTypes.object.isRequired,
   showSuccess: PropTypes.func.isRequired,
   showError: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 // Use the Higher Order Component design pattern

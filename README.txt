@@ -1,3 +1,7 @@
+Subramanian, Vasan.
+Pro MERN Stack: Full Stack Web App Development with Mongo, Express, React, and Node
+Apress. Kindle Edition. 
+
 Subramanian's Version:
 ----------------------
 https://github.com/vasansr/pro-mern-stack
@@ -26,6 +30,22 @@ https://developer.github.com/v3/guides/traversing-with-pagination/
 https://react-bootstrap.github.io
 https://react-bootstrap.github.io/components.html
 
+/* React Select - used for Search Bar in Header.jsx...
+* look for <Select.Async...>
+*/
+https://github.com/JedWatson/react-select
+
+/* Using Google Sign-In for Websites */
+https://developers.google.com/identity/sign-in/web/
+https://developers.google.com/identity/sign-in/web/devconsole-project
+
+Mo. 12/11/2017:
+Project Name: "IssueTracker"
+"issuetracker-188716"
+here is your Client ID:
+"350207866638-1togc53vn13tqc3lm25mjvdb4qt6vhhi.apps.googleusercontent.com"
+here is your Client Secret:
+"afgg1IjF6UcwZ6GhF7eL1kYb"
 
 For webpack-dev-server with compiling and pushing of new changes:
 -----------------------------------------------------------------
@@ -68,8 +88,9 @@ For production deployment:
 copying the bootstrap distribution from ./node_modules/boostrap.dist
 to ./static/bootstrap, so run "npm run bootstrap-copy" which does
 
- $ cp -r ./node_modules/bootstrap/dist ./static/bootstrap.  This
-is for use primarily of the CSS, as the JavaScript is included
+ $ cp -r ./node_modules/bootstrap/dist ./static/bootstrap.
+
+This is for use primarily of the CSS, as the JavaScript is included
 in react-boostrap.
 
   On Linux you could do a soft-link instead:

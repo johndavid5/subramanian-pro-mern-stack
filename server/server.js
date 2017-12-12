@@ -8,6 +8,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import favicon from 'serve-favicon';
 import { ObjectId } from 'mongodb';
+import session from 'express-session';
 
 // const Config = require('../config.js');
 // import Config from '../config';
@@ -44,6 +45,7 @@ app.use(express.static('static'));
 // Request body...
 app.use(bodyParser.json());
 
+
 // Configure for automagic pretty printing
 // of JSON to client when you call res.json(output);
 // Oh, JSON, you look pretty...!
@@ -53,6 +55,67 @@ app.set('json spaces', 2);
 //  const sWho = 'app.get("/favicon.ico")';
 //  console.log(`${sWho}()...`);
 // });
+
+app.use(session({secret: 'groucho', resave: false, saveUninitialized: true}));
+
+// Gotta be logged in to make modifications...
+app.all('/api/*', (req,res,next)=>{
+  if(req.method==='DELETE'||req.method==='POST'||req.method==='PUT'){
+    if(!req.session||!req.session.user){
+       res.status(403).send({
+         message: 'You are not authorized to perform this operation.',
+       });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+app.get('/api/users/me', (req,res)=>{
+  if(req.session && req.session.user){
+    res.json(req.session.user);
+  } else {
+    res.json({signedIn: false, name: ''});
+  }
+});
+
+app.post('/signin', (req,res)=>{
+  if(!req.body.id_token){
+    res.status(400).send({code: 400, messge: 'Missing Token.'});
+    return;
+  }
+
+  fetch(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${req.body.id_token}`)
+  .then(response=>{
+    if(!response.ok){
+      response.json()
+      .then(error=>Promise.reject(error));
+    }
+
+    response.json()
+    .then(data => {
+      req.session.user = {
+        signedIn: true,
+	    name: data.given_name,
+      };
+      res.json(req.session.user);
+    });
+  })
+  .catch(error => {
+    console.log(error); 
+    res.status(500).json({message: `Internal Server Error: ${error}`});
+  });
+});
+
+app.post('/signout', (req,res)=>{
+  if(req.session){
+    req.session.destroy();
+  }
+
+  res.json({status: 'ok'});
+});
 
 app.get('/api/issues', (req, res) => {
 

@@ -37,9 +37,10 @@ const IssueRow = (props) => {
       <td>{props.issue.effort}</td>
       <td>{props.issue.completionDate ? props.issue.completionDate.toDateString() : ''}</td>
       <td>{props.issue.title}</td>
+      {props.deleteIssue?(
       <td>
         <Button bsSize="xsmall" onClick={onDeleteClick}><Glyphicon glyph="trash" /></Button>
-      </td>      
+      </td>):null}      
     </tr>
   );
 };
@@ -83,7 +84,7 @@ function IssueTable(props) {
           <th>Effort</th>
           <th>Completion Date</th>
           <th>Title</th>
-          <th></th>
+          {props.deleteIssue ? <th></th> : null}
         </tr>
       </thead>
       <tbody>{issueRows}</tbody>
@@ -314,7 +315,10 @@ class IssueList extends React.Component {
          maxButtons={7}
 	     next prev boundaryLinks 
         />
-        <IssueTable issues={this.state.issues} deleteIssue={this.deleteIssue} sortBy={this.sortBy} />
+        <IssueTable
+         issues={this.state.issues}
+         deleteIssue={this.props.user.signedIn ? this.deleteIssue : null}
+         sortBy={this.sortBy} />
         {(function (props) { // Equivalent of Angular ng-if using IIFE()
           if (Utils.stringToBool(props.location.query.debug)) {
             return (<pre>this.props={JSON.stringify(props, null, 2)}</pre>);
@@ -334,6 +338,7 @@ IssueList.propTypes = {
   location: PropTypes.object.isRequired,
   router: PropTypes.object,
   showError: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 const IssueListWithToast = withToast(IssueList);

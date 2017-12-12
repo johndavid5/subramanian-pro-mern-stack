@@ -38,6 +38,7 @@ renderedPageRouter.get('*', (req, res) => {
               params: renderProps.params,
               location: renderProps.location,
               urlBase: 'http://localhost:3000',
+              cookie: req.headers.cookie,
               })
           );
 
@@ -67,7 +68,7 @@ renderedPageRouter.get('*', (req, res) => {
             res.status(200).send(template(html, initialState));
          })
          .catch( err => {
-            console.log(`Error rendering to string: ${err}`);
+            console.log(`${sWho}(): Error rendering to string: ${err}`);
          });
       } else {
         res.status(404).send('Not found');

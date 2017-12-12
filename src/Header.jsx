@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Navbar, Nav, NavItem, NavDropdown, MenuItem, Glyphicon, Col} from 'react-bootstrap';
+import {Navbar, Nav, NavItem, Col} from 'react-bootstrap';
 import {LinkContainer} from 'react-router-bootstrap'; 
 import {withRouter} from 'react-router';
 import Select from 'react-select';
 
+import SigninNavItem from './SigninNavItem.jsx';
 import IssueAddNavItem from './IssueAddNavItem.jsx';
 import withToast from './withToast.jsx';
 
@@ -92,10 +93,12 @@ const Header = (props) => {
     </Col>
     <Col sm={3}>
       <Nav pullRight>
-        <IssueAddNavItem showError={props.showError}/>
-        <NavDropdown id="user-dropdown" title={<Glyphicon glyph="option-horizontal" />} noCaret>
-          <MenuItem>Logout</MenuItem>
-        </NavDropdown>
+        {props.user.signedIn ? <IssueAddNavItem showError={props.showError}/> : null}
+        <SigninNavItem
+         user={props.user} onSignin={props.onSignin} 
+         onSignout={props.onSignout} showError={props.showError}
+         showSuccess={props.showSuccess}
+        />
       </Nav>
     </Col>
   </Navbar>
@@ -104,6 +107,10 @@ const Header = (props) => {
 
 Header.propTypes = {
   showError: PropTypes.func.isRequired,
+  showSuccess: PropTypes.func.isRequired,
+  onSignin: PropTypes.func.isRequired,
+  onSignout: PropTypes.func.isRequired,
+  user: PropTypes.object,
   router: PropTypes.object,
 }
 

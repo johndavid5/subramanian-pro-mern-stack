@@ -7,6 +7,7 @@ export default function template(body, initialState){
 
   <!-- Tell mobile browser that we know how to handle small screens. -->
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <script src="https://apis.google.com/js/api:client.js"></script>
 
   <title>Pro MERN Stack</title>
 
@@ -63,6 +64,7 @@ export default function template(body, initialState){
     <script>window.__INITIAL_STATE__=${JSON.stringify(initialState)};</script>
 	<script src="/vendor.bundle.js"></script>
     <script src="/app.bundle.js"></script>
+    <script src="/config.js"></script>
   </body>
 </html>
 `;
